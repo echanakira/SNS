@@ -37,7 +37,7 @@ create table message(mid number(10,0),
                     end_time number(10,0),
                     longitude decimal,
                     latitude decimal,
-                    extend1 char(1),
+                    extend1 number(10,0),
                     cat_id number(10,0),
                     publisher_id number(10,0),
                     sub_id number(10,0),
@@ -54,6 +54,16 @@ create table readercategory(
                     foreign key(rid) references reader,
                     foreign key(cid) references category,
                     foreign key(sid) references subcategory);
+					
+create table MessageCategory(
+                    mid number(10,0),
+                    cat_id number(10,0),
+                    sub_cat number(10,0),
+                    primary key(mid, cat_id, sub_cat),
+                    foreign key(mid) references message,
+                    foreign key(cat_id) references category
+                    foreign key(sub_cat) references subcategory
+                    );
 
 
 insert into publisher values (1,'person1','person1@sns.com','person1');
