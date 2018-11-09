@@ -45,7 +45,25 @@ create table message(mid number(10,0),
                     foreign key(publisher_id) references publisher,
                     foreign key(cat_id) references category,
                     foreign key(sub_id) references subcategory);
-
+					
+--If some categories are not activated by the user, the archive table is used					
+/*
+create table archive(mid number(10,0), 
+                    content varchar2(1024),
+                    time_entered number(10,0),
+                    start_time number(10,0),
+                    end_time number(10,0),
+                    longitude decimal,
+                    latitude decimal,
+                    extend1 number(10,0),
+                    cat_id number(10,0),
+                    publisher_id number(10,0),
+                    sub_id number(10,0),
+                    primary key(mid), 
+                    foreign key(publisher_id) references publisher,
+                    foreign key(cat_id) references category,
+                    foreign key(sub_id) references subcategory);
+*/
 create table readercategory(
                     rid number(10,0),
                     cid number(10,0),
