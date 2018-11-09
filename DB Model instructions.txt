@@ -1,0 +1,54 @@
+Copy and paste the following into the box on the left at: https://app.quickdatabasediagrams.com/#/
+----not-this-line----------------------------------------------
+
+Publisher
+-
+ID PK int FK - Message.publisher_id
+name string
+email string
+password string
+
+Reader
+-
+rid PK number(10,0)
+name varchar2(1024)
+email varchar(100)
+password varchar(50)
+
+
+Category
+-
+cid PK number(10,0)
+name varchar2(1024)
+
+Subcategory
+--
+sid PK number(10,0) 
+name varchar2(1024)
+parent_cat_id number(10,0) FK >- Category.cid
+
+Message
+--
+mid PK number(10,0),
+content varchar2(1024),
+time_entered number(10,0),
+start_time number(10,0),
+end_time number(10,0),
+longitude decimal,
+latitude decimal,
+extend1 char(1),
+publisher_id number(10,0),
+sub_id number(10,0), FK >0- Subcategory.sid
+
+MessageCategory
+--
+mid number(10,0) FK - Message.mid
+cat_id number(10,0) FK -< Category.cid
+sub_cat number(10,0) FK >0- Subcategory.sid
+
+Readercategory
+--
+rid PK number(10,0), FK - Reader.rid
+cid PK number(10,0), FK - Category.cid
+sid PK number(10,0), FK - Subcategory.sid
+------not-this-line-----------------------------------------------------------------
