@@ -37,23 +37,45 @@ create table message(mid number(10,0),
                     end_time number(10,0),
                     longitude decimal,
                     latitude decimal,
-                    extend1 char(1),
-                    cat_id number(10,0),
+                    extend1 number(10,0),         
                     publisher_id number(10,0),
-                    sub_id number(10,0),
+                    primary key(mid), 
+                    foreign key(publisher_id) references publisher);
+					
+--If some categories are not activated by the user, the archive table is used					
+/*
+create table archive(mid number(10,0), 
+                    content varchar2(1024),
+                    time_entered number(10,0),
+                    start_time number(10,0),
+                    end_time number(10,0),
+                    longitude decimal,
+                    latitude decimal,
+                    extend1 number(10,0),
+                    publisher_id number(10,0),
                     primary key(mid), 
                     foreign key(publisher_id) references publisher,
                     foreign key(cat_id) references category,
                     foreign key(sub_id) references subcategory);
-
+*/
 create table readercategory(
                     rid number(10,0),
-                    cid number(10,0),
-                    sid number(10,0),
-                    primary key(rid,cid,sid),
+                    cat_id number(10,0),
+                    sub_id number(10,0),
+                    primary key(rid,cat_id,sub_id),
                     foreign key(rid) references reader,
-                    foreign key(cid) references category,
-                    foreign key(sid) references subcategory);
+                    foreign key(cat_id) references category,
+                    foreign key(sub_id) references subcategory);
+					
+create table messagecategory(
+                    mid number(10,0),
+                    cat_id number(10,0),
+                    sub_id number(10,0),
+                    primary key(mid, cat_id, sub_id),
+                    foreign key(mid) references message,
+                    foreign key(cat_id) references category
+                    foreign key(sub_id) references subcategory
+                    );
 
 
 insert into publisher values (1,'person1','person1@sns.com','person1');
