@@ -4,7 +4,7 @@ drop table reader;
 drop table category;
 drop table subcategory;
 drop table readercategory;
-
+drop table messagecategory;
 
 create table publisher(
                 name varchar2(1024),
@@ -25,7 +25,7 @@ create table category(
 
 create table subcategory(
                          name varchar(1024),
-                         parent_cat_id varchar2(1024),
+                         parent_cat_id varchar(1024),
                          primary key(name),
                          foreign key(parent_cat_id) references category);
 
@@ -39,7 +39,7 @@ create table message(
                     latitude decimal,
                     extend1 number(10,0),         
                     publisher_id varchar2(1024),
-                    primary key(publisher_id, time_entered), 
+                    primary key(mid), 
                     foreign key(publisher_id) references publisher);
 					
 --If some categories are not activated by the user, the archive table is used					
