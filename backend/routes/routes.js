@@ -24,20 +24,20 @@ var appRouter = function (app) {
    addRandomReader(req, res)
  })
 
-//currently does nothing
-//will get user info, compare it to info from database, and then sign them in if
+//gets user info, compares it to info from database, and then signs them in if
 //everything matches
- app.post("/sign-in", function(req, res){
+ app.get("/sign-in", function(req, res){
    console.log(req.body);
-   if(signInReader(req, res) > 0){
-     res.sendFile('./views/home.html');
+   if(signIn(req, res) > 0){
+     //res.sendFile('./views/home.html');
+     res.json(req.body.username)
    }
    //add actual appropriate response
    //res.sendFile('./views/index.html')
    //res.json(req.body)
  })
 
- app.get("/sign-in", function(req,res){
+ app.post("/sign-in", function(req,res){
    res.json(req.body);
  })
 
@@ -45,6 +45,14 @@ var appRouter = function (app) {
    console.log(req.body);
    addReader_checkExists(req, res);
    //res.json(req.body)
+ })
+
+ //should take request from mobile app
+ app.get("/login/:username-:password", function(req, res){
+   console.log(req.body);
+   if(signInReader(req, res)>0){
+     res.json(req.body.username)
+   }
  })
 
  //app.post()
@@ -124,7 +132,7 @@ function addReader (req, res) {
   })
 }
 
-function signInReader (req, res) {
+function signIn (req, res) {
   oracledb.getConnection(config, function(err, connection){
     if(err){console.error(err.message);
       return;
@@ -141,6 +149,29 @@ function signInReader (req, res) {
           res.status(404).send({message: 'invalid'});
         } else {
           res.send({message: 'success'});
+        }
+
+    })
+  })
+}
+
+function signInReader (req, res) {
+  oracledb.getConnection(config, function(err, connection){
+    if(err){console.error(err.message);
+      return;
+    }
+    connection.execute('select count(name) from reader where name=:username and password=:password',
+      {username: req.params.username, password: req.params.password},
+      function(err, result){
+        if(err){console.error(err.message);
+          return;
+        }
+        bool = result.rows[0][0];
+        console.log('matches:'+bool);
+        if(bool === 0){
+          res.status(404).send({message: 'invalid'});
+        } else {
+          res.send({username: req.params.username});
         }
 
     })
