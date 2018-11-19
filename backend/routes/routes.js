@@ -120,8 +120,8 @@ function addReader (req, res) {
       return;
     }
     //connection.execute('select count(name) from reader where name=:username',)
-    connection.execute('insert into '+req.body.role+' values (:id, :username, :email, :password)',
-    {id: faker.random.number(), username: req.body.username, email: req.body.email, password: req.body.password},
+    connection.execute('insert into '+req.body.role+' values (:username, :email, :password)',
+    { username: req.body.username, email: req.body.email, password: req.body.password},
     function(err, result){
       if (err){console.error(err.message);
       return;
