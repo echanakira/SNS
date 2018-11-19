@@ -14,87 +14,49 @@ var appRouter = function (app) {
     res.sendFile('./views/index.html');
   });
 //listen on port -> get request -> route to function
-  /*app.
 
-  app.get("/user", function (req, res) {
-    var data = ({
-      firstName: faker.name.firstName(),
-      lastName: faker.name.lastName(),
-      username: faker.internet.userName(),
-      email: faker.internet.email()
-    });
-    res.status(200).send(data);
-  });
-
- app.get("/users/:num", function (req, res) {
-   var users = [];
-   var num = req.params.num;
-
-   if (isFinite(num) && num  > 0 ) {
-     for (i = 0; i <= num-1; i++) {
-       users.push({
-           firstName: faker.name.firstName(),
-           lastName: faker.name.lastName(),
-           username: faker.internet.userName(),
-           email: faker.internet.email()
-        });
-     }
-
-     res.status(200).send(users);
-
-   } else {
-     res.status(400).send({ message: 'invalid number supplied' });
-   }
-
- });*/
  app.get("/readers", function(req, res){
    allReaders(req,res)
  })
 
- app.get("/random-reader", function(req, res){ 
+//for testing purposes only
+ app.get("/random-reader", function(req, res){
    addRandomReader(req, res)
  })
 
+//gets user info, compares it to info from database, and then signs them in if
+//everything matches
  app.get("/sign-in", function(req, res){
-   res.sendFile('./views/index.html')
+   console.log(req.body);
+   if(signIn(req, res) > 0){
+     //res.sendFile('./views/home.html');
+     res.json(req.body.username)
+   }
+   //add actual appropriate response
+   //res.sendFile('./views/index.html')
+   //res.json(req.body)
+ })
+
+ app.post("/sign-in", function(req,res){
+   res.json(req.body);
  })
 
  app.post('/new', function(req,res){
    console.log(req.body);
-   addReader(req, res);
-   res.json(req.body)
+   addReader_checkExists(req, res);
+   //res.json(req.body)
  })
-/*oracledb.getConnection(config, function(err, connection){
-  if (err) {
-    console.error(err.message);
-    return;
-  }
 
-  connection.execute('select * from reader',
-    function(err, result){
-      if(err) {
-        console.error(err.message);
-        return;
-      }
-      app.get("/reader", function (req, res) {
-       res.json({page:result})
-    })
-  })
-})*/
-/*  app.get("/reader", function (req, res){
-    let conn;
+ //should take request from mobile app
+ app.get("/login/:username-:password", function(req, res){
+   console.log(req.body);
+   if(signInReader(req, res)>0){
+     res.json(req.body.username)
+   }
+ })
 
-    try {
-      conn = oracledb.getConnection(config);
-      const result = conn.execute('select * from reader');
-      res.json({page: result});
+ //app.post()
 
-    } catch (err) {
-      console.log("broken",err);
-    } finally {
-      return
-    }
-  });*/
 }
 
 module.exports = appRouter;
@@ -105,7 +67,7 @@ function allReaders (req, res) {
       console.error(err.message);
       return;
     }
-    connection.execute('select * from reader',
+    connection.execute('select name from reader',
       function(err, result){
         if(err) {
           console.error(err.message);
@@ -132,19 +94,86 @@ function addRandomReader (req, res) {
   })
 }
 
+//checks if username is taken - does not check email currently
+function addReader_checkExists (req, res){
+  oracledb.getConnection(config, function(err, connection){
+    if(err){console.error(err.message);
+      return;
+    }
+    connection.execute('select count(name) from '+req.body.role+' where name=:username',
+    {username: req.body.username},
+    function(err, result) {
+      if (err) {console.error(err.message);
+      return;
+    }
+    console.log(result);
+    if (result.rows[0][0] === 0) {
+      addReader(req, res);
+    } else {res.send({message: 'username taken'});}
+    })
+  })
+}
+
 function addReader (req, res) {
   oracledb.getConnection(config, function(err, connection){
     if(err){console.error(err.message);
       return;
     }
-    connection.execute('insert into reader values (:id, :username, :email, :password)',
-  {id: faker.random.number(), username: req.body.username, email: req.body.email, password: req.body.password},
+    //connection.execute('select count(name) from reader where name=:username',)
+    connection.execute('insert into '+req.body.role+' values (:id, :username, :email, :password)',
+    {id: faker.random.number(), username: req.body.username, email: req.body.email, password: req.body.password},
     function(err, result){
       if (err){console.error(err.message);
       return;
       }
       console.log(result);
+      res.send({message: 'success'})
+    })
+  })
+}
+
+function signIn (req, res) {
+  oracledb.getConnection(config, function(err, connection){
+    if(err){console.error(err.message);
+      return;
     }
-    )
+    connection.execute('select count(name) from '+req.body.role+' where name=:username and password=:password',
+      {username: req.body.username, password: req.body.password},
+      function(err, result){
+        if(err){console.error(err.message);
+          return;
+        }
+        bool = result.rows[0][0];
+        console.log('matches:'+bool);
+        if(bool === 0){
+          res.status(404).send({message: 'invalid'});
+        } else {
+          res.send({message: 'success'});
+        }
+
+    })
+  })
+}
+
+function signInReader (req, res) {
+  oracledb.getConnection(config, function(err, connection){
+    if(err){console.error(err.message);
+      return;
+    }
+    connection.execute('select count(name) from reader where name=:username and password=:password',
+      {username: req.params.username, password: req.params.password},
+      function(err, result){
+        if(err){console.error(err.message);
+          return;
+        }
+        bool = result.rows[0][0];
+        console.log('matches:'+bool);
+        if(bool === 0){
+          res.status(404).send({message: 'invalid'});
+        } else {
+          res.send({username: req.params.username});
+        }
+
+    })
   })
 }
