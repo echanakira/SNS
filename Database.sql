@@ -37,8 +37,10 @@ create table message(
                     end_time timestamp(0),
                     longitude decimal,
                     latitude decimal,
-                    extend1 number(10,0),         
+                    extend1 number(10,0),      
                     publisher_id varchar2(1024),
+                    pic blob,
+                    video blob,
                     primary key(mid), 
                     foreign key(publisher_id) references publisher);
 					
@@ -52,7 +54,9 @@ create table archive(mid varchar(1024),
                     longitude decimal,
                     latitude decimal,
                     extend1 number(10,0),
-                    publisher_id number(10,0),
+                    publisher_id varchar2(1024),
+                    pic blob,
+                    video blob,
                     primary key(mid), 
                     foreign key(publisher_id) references publisher,
                     foreign key(cat_id) references category,
@@ -83,6 +87,6 @@ insert into reader values ('person101','person101@sns.com','person101');
 insert into category values('Category1');
 insert into subcategory values('Subcategory1','Category1');
 insert into message values('Message01','content content','1960-1-01 23:03:20','1960-01-01 23:03:20','1960-01-01 23:03:20',
-39.302597,-76.600559,1,'person1');
+39.302597,-76.600559,1,'person1', EMPTY_BLOB(), EMPTY_BLOB());
 insert into readercategory values ('person101','Category1','Subcategory1');
 insert into messagecategory values('Message01','Category1','Subcategory1');
