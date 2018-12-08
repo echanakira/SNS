@@ -1,6 +1,7 @@
 var express = require("express");
 var bodyParser = require("body-parser");
-var routes = require("./routes/routes.js");
+var p_routes = require("./routes/p_routes.js");
+var r_routes = require("./routes/r_routes.js");
 var app = express();
 var oracledb = require('oracledb');
 oracledb.autoCommit = true;
@@ -17,7 +18,9 @@ app.use(express.static(__dirname + '/views'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-routes(app);
+//routes(app);
+app.use('/pub', p_routes);
+app.use('/', r_routes);
 
 var server = app.listen(3000, function () {
     console.log("app running on port.", server.address().port);
