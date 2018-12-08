@@ -1,0 +1,31 @@
+<head>
+  <style>
+    form {
+      margin:0 auto;
+      width:300px
+      }
+      input {
+        margin-bottom:3px;
+        padding:10px;
+        width: 100%;
+        border:1px solid #CCC
+      }
+      button {
+        padding:10px
+      }
+      label {
+        cursor:pointer
+      }
+
+  </style>
+</head>
+
+<form id='message-form' action="new-message" method='post'>
+  <input type="text" name = "title" placeholder="Message Title" required>
+  <input type="text" name = "message_body" placeholder="Message" required>
+  <label for="start">Enter a start date and time: </label>
+  <label for="end">Enter an end date and time: </label>
+  <input id = "start" type="datetime-local" name = "start_dt">
+  <input id = "end" type="datetime-local" name = "end_dt">
+  <input type="submit" value="Submit">
+</form>
