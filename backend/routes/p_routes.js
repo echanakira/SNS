@@ -37,8 +37,15 @@ p_router.post("/register", function(req, res,next){
 
 })
 
-p_router.post("/new-message", function(req,res,next){
+p_router.get("/:username/new-message", function(req,res,next){
   //renders new-message form
+  res.sendFile(path.resolve('./views/message.html'));
+  //addMessage(req, res);
+})
+p_router.post("/:username/new-message", function(req,res,next){
+  //renders new-message form
+  //res.sendFile(path.resolve('./views/home.html'));
+  addMessage(req, res);
 })
 
 
@@ -104,11 +111,11 @@ function signInPub(req, res) {
         bool = result.rows[0][0];
         console.log('matches:'+bool);
         if(bool === 0){
-          res.status(404).write("<html><h1>failure</h1></html>");
+          res.status(404).write("<html><h1>failure - go back</h1></html>");
           return;
         } else {
           //take to "home" or new messaage page
-          res.write("<html><h1>success</h1></html>");
+          res.redirect('/pub/'+req.query.username+'/new-message');
           return;
         }
 
@@ -123,15 +130,49 @@ function addMessage (req, res) {
     }
     //needs MID, content, time_entered, start_time, end_time, long, lat, extend, publisher_id
     //mid can be a hash from vals
-    connection.execute('insert into message values (:MID, :content, :time_entered, :start_dt, :end_dt, :long, :lat, :publisher)',
-    { MID: 0, content: req.body.message_body, time_entered: req.timestamp, start_dt: req.body.start_dt, end_dt: req.body.end_dt, long: 0, lat: 0, publisher: req.params.username },
+    console.log(formatDate(req.body.start_dt));
+    console.log(formatDate(req.body.end_dt));
+    console.log(formatDate(new Date().toISOString().substring(0,16)));
+    var mid = faker.random.number();
+    console.log(mid);
+    connection.execute('insert into message values (:mid, :content, TO_TIMESTAMP(:time_ent,\'YYYY-MM-DD HH24:MI\'), TO_TIMESTAMP(:sdt,\'YYYY-MM-DD HH24:MI\'), TO_TIMESTAMP(:edt,\'YYYY-MM-DD HH24:MI\'), :lo, :la, :ex, :publ)',
+    { mid: mid+1, content: req.body.message_body,
+      time_ent: formatDate(new Date().toISOString().substring(0,16)),
+      sdt: formatDate(req.body.start_dt), edt: formatDate(req.body.end_dt),
+      lo: req.body.long, la: req.body.lat, ex: req.body.extend,
+      publ: req.params.username},
     function(err,result){
       if (err){console.error(err.message);
       return;
       }
+      res.send(result);
       console.log(result);
       return;
     })
   })
 }
+
+function curMessageCount() {
+  var ret = 0;
+  oracledb.getConnection(config, function(err,connection){
+    if(err){console.error(err.message);
+      return -1;
+    }
+    connection.execute('select count(MID) from message',
+    function(err, result) {
+      if (err){console.error(err.message);
+      return -1;
+    }
+    console.log('Message Count: '+ result.rows[0]);
+    ret = result.rows[0],10;
+  })
+})
+return ret;
+}
+
+var formatDate = function(dt_string) {
+  return dt_string.replace('T',' ');
+
+}
+
 module.exports = p_router;

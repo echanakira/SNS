@@ -1,0 +1,42 @@
+<head>
+  <style>
+    form {
+      margin:0 auto;
+      width:300px
+      }
+      input {
+        margin-bottom:3px;
+        padding:10px;
+        width: 100%;
+        border:1px solid #CCC
+      }
+      button {
+        padding:10px
+      }
+      label {
+        cursor:pointer
+      }
+
+  </style>
+</head>
+<!--script type="text/javascript">
+  let today = new Date().toISOString().substr(0, 10);
+  document.querySelector("#today").value = today;
+</script-->
+
+<form id='message-form' action="new-message" method='post'>
+  <!--input type="text" name = "title" placeholder="Message Title" required-->
+  <input type="text" name = "message_body" placeholder="Message" required>
+  <label for="start">Enter a start date and time: </label>
+  <input id = "start" type="datetime-local" name = "start_dt">
+  <label for="end">Enter an end date and time: </label>
+  <input id = "end" type="datetime-local" name = "end_dt">
+  <label for="end">Enter the latitude for your message area center: </label>
+  <input id = "lat" type="float" name = "lat">
+  <label for="end">Enter the longitude for your message area center: </label>
+  <input id = "end" type="float" name = "long">
+  <label for="end">Enter the radius you would like your message to cover around this point (in miles): </label>
+  <input id = "end" type="float" name = "extend">
+  <!--input type = "hidden" id ="today"-->
+  <input type="submit" value="Submit">
+</form>
