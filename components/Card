@@ -1,0 +1,91 @@
+import * as React from 'react';
+import { Text, View, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { Constants } from 'expo';
+
+// You can import from local files
+import AssetExample from './components/AssetExample';
+
+// or any pure javascript modules available in npm
+import { Card } from 'react-native-paper';
+
+export default class App extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      isActive: true,
+    };
+  }
+
+  hideCard() {
+    this.setState({
+      isActive: false,
+    });
+  }
+
+  render() {
+    if(!this.state.isActive){
+        return null;
+    }
+    return (
+      <View style={styles.container}>
+        <View style={styles.card}>
+          <Text style={styles.name}> Name </Text>
+          <View
+            style={{
+              borderBottomColor: 'black',
+              borderBottomWidth: 0.5,
+            }}
+          />
+          <Text style={styles.message}>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          </Text>
+          <TouchableOpacity
+            style={{
+               flexDirection: 'row',
+               justifyContent: 'center',
+               marginLeft: 150,
+               width: 50
+             }}
+             onPress={this.hideCard}
+          >
+            <Text
+              style={{
+                borderRadius: 4,
+                borderWidth: 0.5,
+                borderColor: '#d6d7da',
+                backgroundColor: '#DCDCDC'
+              }}
+            > Close </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingTop: Constants.statusBarHeight,
+    backgroundColor: '#ecf0f1',
+    padding: 8,
+  },
+  name: {
+    fontStyle: 'bold',
+    fontSize: 20,
+  },
+  message: {
+    margin: 24,
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  card: {
+    backgroundColor: 'white',
+    width: 344,
+    height: 200,
+    justifyContent: 'center',
+  },
+});

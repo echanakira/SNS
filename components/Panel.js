@@ -9,13 +9,8 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, TextInput} from 'react-native';
 import MapView from 'react-native-maps';
-import Map from './components/Map.js';
-import Panel from './components/Panel.js';
-
-//39.290386
-//-76.612190
 type Props = {};
-export default class App extends Component<Props> {
+export default class Panel extends Component<Props> {
     constructor(props) {
         super(props);
      }
@@ -23,11 +18,27 @@ export default class App extends Component<Props> {
 
   render() {
     return (
-      <Panel />
+      <View>
+        <Text> This is a Pane </Text>
+      </View>
     );
   }
 }
 
 
-// const styles = StyleSheet.create({
-// });
+const styles = StyleSheet.create({
+  container1: {
+    flex: 1,
+  },
+  container2: {
+    backgroundColor: 'silver',
+    top: 0,
+    left: 0,
+    height: 100,
+  },
+  container3: {
+    backgroundColor: 'silver',
+    top: 450,
+    height: 100,
+  },
+});

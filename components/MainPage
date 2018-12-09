@@ -1,0 +1,90 @@
+import * as React from 'react';
+import { Text, View, StyleSheet, Input, TextInput } from 'react-native';
+
+import { Constants } from 'expo';
+
+// You can import from local files
+import AssetExample from './components/AssetExample';
+
+// or any pure javascript modules available in npm
+import { Card } from 'react-native-paper';
+
+export default class App extends React.Component {
+  render() {
+    return (
+
+      <View style={styles.container1}>
+        <View style={styles.container2}>
+          <Text style={styles.icon}> Icon </Text>
+          <Text style={styles.name}> Elijah </Text>
+          <Text style={styles.settings}> Settings </Text>
+        </View>
+
+        <View style={styles.card}>
+
+        </View>
+        <View style={styles.container3}>
+          <TextInput
+            style={styles.input}
+            value='longitude'
+          />
+          <TextInput
+            style={styles.input}
+            value='latitude'
+          />
+        </View>
+      </View>
+
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  container1: {
+    flex: 1,
+    backgroundColor: 'white',
+    paddingTop: Constants.statusBarHeight,
+  },
+  container2: {
+    paddingTop: Constants.statusBarHeight,
+    backgroundColor: 'silver',
+    top: 0,
+    left: 0,
+    height: 70,
+    flexDirection:'row',
+    shadowColor: 'black',
+    position: 'fixed'
+  },
+  card:{
+    backgroundColor: 'blue',
+    height: 40,
+    width: 50,
+  },
+  container3: {
+    paddingTop: Constants.statusBarHeight,
+    backgroundColor: 'silver',
+    top: 430,
+    height: 70,
+    flexDirection:'row',
+    justifyContent: 'space-around',
+    position: 'fixed'
+  },
+  name:{
+    textAlign:'center',
+    fontSize: 30,
+    marginLeft: 80
+  },
+  icon:{
+    textAlign:'left',
+    fontSize: 20,
+    position: 'relative',
+    marginLeft: 5,
+  },
+  settings:{
+    fontSize: 18,
+    marginLeft: 60,
+  },
+  input:{
+    borderColor:'black',
+  },
+});
