@@ -9,24 +9,31 @@ var config = {
   password      : "oracle",
   connectString : "LOCALHOST:1521/XE"
 }
-
+///// TODO: add email verification, add message fetching
 
 /////////////////////////////////////////////////////////////////////////////////
 var r_router = express.Router();
 r_router.use(function(req,res,next){
   console.log(req.method, req.url);
+  //archive old things
+
   next();
 })
+
 
 r_router.get("/",function(req,res,next){
   //may not be needed
 })
+
+//LOGIN READER
 r_router.get("/login/:username-:password", function(req,res){
   //tells users if they have logged in successfully
   //if so, redirects to home page
   //if not, redirects back to Login
   signInReader(req,res);
 })
+
+//REGISTER NEW READER
 r_router.post("/register/:username-:password-:email", function(req, res){
   //tells user if they have registered successfully
   //if so, redirects to Login
@@ -34,8 +41,63 @@ r_router.post("/register/:username-:password-:email", function(req, res){
   addReader_checkExists(req,res); //calls addReader itself
 })
 
-//assumes reader if pub is not specified
-//app.use("/",r_router)
+//DELETE READER - may need to change to post if use doesn't work
+r_router.use("/delete/:username-:password",function(req,res){
+  oracledb.getConnection(config, function(err, connection){
+    if (err) {
+      console.error(err.message);
+      return;
+    }
+    connection.execute('DELETE FROM reader WHERE name=:username and password=:password',
+    {username: req.params.username, password: req.params.password},
+      function(err, result){
+        if(err) {
+          console.error(err.message);
+          return;
+        }
+        res.status(200); //signals that deletion was successful
+    })
+  })
+})
+
+//GET MESSAGES - send as JSON
+  //cat is category id or "ALL" for all messages
+r_router.get("/message/:cat", function(req, res){
+  //call message function
+  getMessages(req,res);
+})
+
+
+
+
+//SUPPORT FUNCTIONS
+function getMessagesHelp (req) {
+  var ret = 'select * from message ';
+  if(req.params.cat != 'ALL') {
+    //need to test out this sql statement
+    ret = 'select * from (select * from messagecategory where CAT_ID='+req.params.cat+') natural join message';
+  }
+  return ret;
+}
+
+function getMessages (req, res) {
+  oracledb.getConnection(config, function(err, connection){
+    if (err) {
+      console.error(err.message);
+      return;
+    }
+    var sql_str = getMessagesHelp(req);
+    connection.execute(sql_str,
+      function(err, result){
+        if(err) {
+          console.error(err.message);
+          return;
+        }
+        res.json({result})
+    })
+  })
+}
+
 
 function allReaders (req, res) {
   oracledb.getConnection(config, function(err, connection){
@@ -74,18 +136,21 @@ function addRandomReader (req, res) {
 function addReader_checkExists (req, res){
   oracledb.getConnection(config, function(err, connection){
     if(err){console.error(err.message);
+        res.status(500);
       return;
     }
     connection.execute('select count(name) from '+req.body.role+' where name=:username',
     {username: req.body.username},
     function(err, result) {
       if (err) {console.error(err.message);
+      res.status(500);
       return;
     }
     console.log(result);
     if (result.rows[0][0] === 0) {
-      addReader(req, res);
-    } else {res.send({message: 'username taken'});}
+      addReader(req, res);//status 200 will probably be sent
+    } else {res.status(404)});} //username taken
+      //res.send({message: 'username taken'});}
     })
   })
 }
@@ -93,6 +158,7 @@ function addReader_checkExists (req, res){
 function addReader (req, res) {
   oracledb.getConnection(config, function(err, connection){
     if(err){console.error(err.message);
+      res.status(500);
       return;
     }
     //connection.execute('select count(name) from reader where name=:username',)
@@ -100,50 +166,28 @@ function addReader (req, res) {
     { username: req.body.username, email: req.body.email, password: req.body.password},
     function(err, result){
       if (err){console.error(err.message);
-      return;
+          res.status(500);
+          return;
       }
       console.log(result);
-      return;
-      //res.send({message: 'success'})
+      res.status(200); //successful
 
     })
   })
 }
 
-/*function signIn (req, res) {
-  oracledb.getConnection(config, function(err, connection){
-    if(err){console.error(err.message);
-      return;
-    }
-    connection.execute('select count(name) from '+req.body.role+' where name=:username and password=:password',
-      {username: req.body.username, password: req.body.password},
-      function(err, result){
-        if(err){console.error(err.message);
-          return;
-        }
-        bool = result.rows[0][0];
-        console.log('matches:'+bool);
-        return bool;
-        if(bool === 0){
-          res.status(404);
-          res.sendFile(path.resolve('views/index.html'));
-        } else { //send to home page
-          res.sendFile(path.resolve('views/home.html'));
-        }
-
-    })
-  })
-}*/
 
 function signInReader (req, res) {
   oracledb.getConnection(config, function(err, connection){
     if(err){console.error(err.message);
+        res.status(500);
       return;
     }
     connection.execute('select count(name) from reader where name=:username and password=:password',
       {username: req.params.username, password: req.params.password},
       function(err, result){
         if(err){console.error(err.message);
+            res.status(500);
           return;
         }
         bool = result.rows[0][0];
@@ -158,5 +202,4 @@ function signInReader (req, res) {
   })
 }
 
-//This function should check if a username is taken when adding a new publisher
 module.exports = r_router;

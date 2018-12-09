@@ -133,10 +133,8 @@ function addMessage (req, res) {
     console.log(formatDate(req.body.start_dt));
     console.log(formatDate(req.body.end_dt));
     console.log(formatDate(new Date().toISOString().substring(0,16)));
-    var mid = faker.random.number();
-    console.log(mid);
     connection.execute('insert into message values (:mid, :content, TO_TIMESTAMP(:time_ent,\'YYYY-MM-DD HH24:MI\'), TO_TIMESTAMP(:sdt,\'YYYY-MM-DD HH24:MI\'), TO_TIMESTAMP(:edt,\'YYYY-MM-DD HH24:MI\'), :lo, :la, :ex, :publ)',
-    { mid: mid+1, content: req.body.message_body,
+    { mid: req.body.title, content: req.body.message_body,
       time_ent: formatDate(new Date().toISOString().substring(0,16)),
       sdt: formatDate(req.body.start_dt), edt: formatDate(req.body.end_dt),
       lo: req.body.long, la: req.body.lat, ex: req.body.extend,
@@ -152,7 +150,7 @@ function addMessage (req, res) {
   })
 }
 
-function curMessageCount() {
+/*function curMessageCount() {
   var ret = 0;
   oracledb.getConnection(config, function(err,connection){
     if(err){console.error(err.message);
@@ -168,7 +166,7 @@ function curMessageCount() {
   })
 })
 return ret;
-}
+}*/
 
 var formatDate = function(dt_string) {
   return dt_string.replace('T',' ');

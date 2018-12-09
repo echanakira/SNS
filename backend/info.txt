@@ -1,0 +1,18 @@
+File: app.js - main file of the backend, creates the Express.js app
+
+Folder: routes
+  File: oldroutes.js - serves archival purposes for developers only
+  File: p_routes.js - hold all publisher routes
+    * all routes in this file begin with /pub which is specified in app.js
+    * this takes care of the web portal and rendering the html pages
+  File: r_routes.js - holds all reader routes
+    * serves as default routes, if /pub is not specified the backend
+      defaults to reader routes
+    * Routes
+      * r_router.get "/login/:username-:password" - basic login
+      * r_router.post "/register/:username-:password-:email" - new reader
+        returns
+      * r_router.use "/delete/:username-:password" - should catch get and
+        post requests of this form - drops this reader from reader table
+      * r_router.get "/message/:cat" - cat is category id or "ALL"
+      * In development
