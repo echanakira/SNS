@@ -1,0 +1,71 @@
+<head>
+  <style>
+    form {
+      margin:0 auto;
+      width:300px
+      }
+      input {
+        margin-bottom:3px;
+        padding:10px;
+        width: 100%;
+        border:1px solid #CCC
+      }
+      button {
+        padding:10px
+      }
+      label {
+        cursor:pointer
+      }
+
+  </style>
+</head>
+
+<div class="form-header">
+  <% if (Object.keys(errors).length === 0) { %>
+    <h2>Create a new message</h2>
+  <% } else { %>
+    <h2 class="errors-heading">please correct the following:</h2>
+    <ul class="errors-list">
+      <% Object.values(errors).forEach(error => { %>
+        <li><%= error.msg %></li>
+      <% }) %>
+    </ul>
+  <% } %>
+</div>
+
+
+<form id='message-form' action="new-message" method='post'>
+  <div class=" <%=errors.title ? 'form-field-invalid':'form-field'%>">
+    <label for="title">Title</label>
+    <input class = "input" id = "title" type="text" name = "title" value="<%= data.title %>" />
+      <% if (data.title) { %>
+        <div class="error">need title</div>
+      <% } %>
+  </div>
+  <div class=" <%= errors.message ? 'form-field-invalid':'form-field'%>">
+    <label for="message">Message</label>
+    <input class = "input" id = "message" name= "message" rows="8" cols="80" value = "<%= data.message %>">
+      <% if (errors.message) { %>
+        <div class="error">need message</div>
+      <% } %>
+  </div>
+  <div class = "<%errors.start_dt ? 'form-field-invalid':'form-field'%>">
+    <label for="start">Enter a start date and time: </label>
+    <input class = "input" id = "start" type="datetime-local" name = "start_dt" value="<%=data.start_dt%>">
+      <% if (errors.start_dt) { %>
+        <div class="error">need start date and time</div>
+      <% } %>
+  </div>
+  <label for="end">Enter an end date and time: </label>
+  <input id = "end" type="datetime-local" name = "end_dt">
+  <label for="lat">Enter the latitude for your message area center: </label>
+  <input id = "lat" type="float" name = "lat">
+  <label for="long">Enter the longitude for your message area center: </label>
+  <input id = "long" type="float" name = "long">
+  <label for="extend">Enter the radius you would like your message to cover around this point (in miles): </label>
+  <input id = "extend" type="float" name = "extend">
+  <!--input type = "hidden" id ="today"-->
+  <div class="form-actions">
+    <button class= "btn" type="submit">Submit</button>
+  </div>
+</form>

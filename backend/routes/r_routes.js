@@ -63,27 +63,33 @@ r_router.use("/delete/:username-:password",function(req,res){
 
 //GET MESSAGES - send as JSON
   //cat is category id or "ALL" for all messages
-r_router.get("/message/:cat/:datetime-:lat-:long", function(req, res){
+r_router.get("/message/:cat-:datetime-:lat-:long", function(req, res){
   //call message function
   getMessages(req,res);
 })
+
+//if we are using readercategory table this route will add to it
+r_router.post("/:username/addCat/:cat") {
+
+}
 
 
 
 
 //SUPPORT FUNCTIONS
-/*function getMessagesHelp (req) {
+//to find if location falls in zone, will need to find zone area
+function getMessagesHelp (req) {
   var ret = 'select * from message ';
-  if(req.params.cat != 'ALL') {
-    //need to test out this sql statement
-    var s1 = '(select * from messagecategory where CAT_ID='+req.params.cat+') MC';
-    var s2 = ''
-
-
-    ret = 'select * from '+s1+' natural join message where ';
+  var dt = req.params.datetime;
+  if(dt == 'NOW') { //set to current datetime
+    dt = (new Date().toISOString().substring(0,16)).replace('T',' ');
+  }
+  if(req.params.cat != 'ALL') { //category is specified
+    //still need to add in location ... maybe?
+    ret = 'select mid, content, publisher_ID from (select * from messagecategory where CAT_ID='+req.params.cat') natural join message where start_time < TO_TIMESTAMP('+dt+',\'YYYY-MM-DD HH24:MI\') and end_time > TO_TIMESTAMP('+dt',\'YYYY-MM-DD HH24:MI\') and abs(latitude)-extend1 <= abs('+req.params.lat+') and abs(latitude)+extend1 >= abs('+req.params.lat+') and abs(longitude)-extend1 <= abs('+req.params.long+') and abs(longitude)+extend1 >= abs('+req.params.long+');';
   }
   return ret;
-}*/
+}
 
 function getMessages (req, res) {
   oracledb.getConnection(config, function(err, connection){

@@ -19,13 +19,12 @@
 
   </style>
 </head>
-<!--script type="text/javascript">
-  let today = new Date().toISOString().substr(0, 10);
-  document.querySelector("#today").value = today;
-</script-->
+<script type="text/javascript">
+  //need to add a check to see if title is unique
+</script>
 
 <form id='message-form' action="new-message" method='post'>
-  <!--input type="text" name = "title" placeholder="Message Title" required-->
+  <input type="text" name = "title" placeholder="Message Title" required>
   <input type="text" name = "message_body" placeholder="Message" required>
   <label for="start">Enter a start date and time: </label>
   <input id = "start" type="datetime-local" name = "start_dt">

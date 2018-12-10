@@ -5,14 +5,28 @@ Folder: routes
   File: p_routes.js - hold all publisher routes
     * all routes in this file begin with /pub which is specified in app.js
     * this takes care of the web portal and rendering the html pages
+    * Routes
+      * GET /pub - publisher login page with form switch to register(?)
+      * GET /pub/login - signs in publisher and takes to new message page
+      * POST /pub/register - registers publishers
+      * GET /pub/:username/new-message - renders new message form
+      * POST /pub/:username/new-message - validates new message form values, sends to db
   File: r_routes.js - holds all reader routes
     * serves as default routes, if /pub is not specified the backend
       defaults to reader routes
-    * Routes
-      * r_router.get "/login/:username-:password" - basic login
-      * r_router.post "/register/:username-:password-:email" - new reader
+    * Routes - every request should result in a status code being returned
+      with 200 = okay, 400/404 = invalid request, and 500 = system error
+      * GET "/login/:username-:password" - basic login
+      * POST "/register/:username-:password-:email" - new reader
         returns
-      * r_router.use "/delete/:username-:password" - should catch get and
+      * use (any action) "/delete/:username-:password" - should catch get and
         post requests of this form - drops this reader from reader table
-      * r_router.get "/message/:cat" - cat is category id or "ALL"
-      * In development
+      * GET "/message/:cat-:datetime-:lat-:log"
+          - cat is category id or "ALL"
+          - datetime should be in format "YYYY-MM-DD HH24:MI"
+            where HH24 is the hour out of 24 or "NOW" if no time given
+            and I will get current system datetime.
+          - NOTE: Still need to implement lat long filtering
+      * POST /:username/addCat/:cat (???) - if we are letting users subscribe to
+        categories then this will add to the ReaderCategory table
+      * In development *

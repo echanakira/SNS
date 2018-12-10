@@ -88,7 +88,7 @@ p_router.post("/:username/new-message", [
     }*/
   )
   //res.send("works");
-  addMessage(req, res);
+  //addMessage(req, res);
 })
 
 
