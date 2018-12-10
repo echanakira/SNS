@@ -19,7 +19,13 @@ export default class Map extends Component<Props> {
             lat: '33.653390',
             long: '-84.449500',
             userLong: '',
-            userLat: ''
+            userLat: '',
+            markers = [
+              {latitude: '33.653390',
+              longitude: '-84.449500',
+              title: 'test',
+              subtitle:'address'}
+            ],
         };
      }
 
@@ -67,8 +73,9 @@ export default class Map extends Component<Props> {
               longitudeDelta: 0.1
             }}
             onRegionChange = {(region) => this.updateRegion(region)}
-
+            annotations={markers[0]}
             >
+
         </MapView>
         <TextInput
           style={styles.longitude}
@@ -95,6 +102,21 @@ export default class Map extends Component<Props> {
    latitudeHandler = (typedText) => {
         this.setState({lat: parseFloat(typedText)})
    }
+
+   populate = () => {
+     console.log('Populating');
+     fetch('https://facebook.github.io/react-native/movies.json')
+     .then(response => response.json())
+
+   }
+
+   //Change to localhost
+  displayMessage = () => {
+    console.log('Fetching');
+    fetch('https://facebook.github.io/react-native/movies.json')
+    .then(response => response.json())
+    .then(json => { this.setState({message: (JSON.stringify(json.movies))})});
+  }
 }
 
 const styles = StyleSheet.create({

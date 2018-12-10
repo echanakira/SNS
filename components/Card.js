@@ -1,35 +1,25 @@
 import * as React from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { Constants } from 'expo';
+import { Button, Text, View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 
-// You can import from local files
-import AssetExample from './components/AssetExample';
+//When a Marker is clicked the Card will become active and the card will be populated by a message
+export default class Cards extends React.Component {
 
-// or any pure javascript modules available in npm
-import { Card } from 'react-native-paper';
-
-export default class App extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      isActive: true,
+      message:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed doeiusmod tempor incididunt ut labore et dolore magna aliqua.'
     };
   }
 
-  hideCard() {
-    this.setState({
-      isActive: false,
-    });
-  }
-
   render() {
-    if(!this.state.isActive){
+    if(!this.props.isActive){
         return null;
     }
     return (
       <View style={styles.container}>
+
         <View style={styles.card}>
-          <Text style={styles.name}> Name </Text>
+          <Text style={styles.name}> [Name] </Text>
           <View
             style={{
               borderBottomColor: 'black',
@@ -37,8 +27,7 @@ export default class App extends React.Component {
             }}
           />
           <Text style={styles.message}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            {this.state.message}
           </Text>
           <TouchableOpacity
             style={{
@@ -47,7 +36,7 @@ export default class App extends React.Component {
                marginLeft: 150,
                width: 50
              }}
-             onPress={this.hideCard}
+             onPress={() => this.props.closeCard()}
           >
             <Text
               style={{
@@ -58,22 +47,36 @@ export default class App extends React.Component {
               }}
             > Close </Text>
           </TouchableOpacity>
+          <Button
+            title='Press'
+            onPress={this.displayMessage()}
+          
+          />
         </View>
       </View>
     );
   }
+
+   //Change to localhost
+  displayMessage = () => {
+    console.log('Fetching');
+    fetch('https://facebook.github.io/react-native/movies.json')
+    .then(response => response.json())
+    .then(json => { this.setState({message: (JSON.stringify(json.movies))})});
+  }
 }
+
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    paddingTop: Constants.statusBarHeight,
+    paddingTop: 120,
     backgroundColor: '#ecf0f1',
-    padding: 8,
+    margin: 8
   },
   name: {
-    fontStyle: 'bold',
+    fontStyle: 'normal',
     fontSize: 20,
   },
   message: {

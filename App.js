@@ -10,7 +10,7 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, TextInput} from 'react-native';
 import MapView from 'react-native-maps';
 import Map from './components/Map.js';
-import Panel from './components/Panel.js';
+import Nav from './components/Nav.js';
 
 //39.290386
 //-76.612190
@@ -23,7 +23,7 @@ export default class App extends Component<Props> {
 
   render() {
     return (
-      <Panel />
+      <Nav/>
     );
   }
 }
