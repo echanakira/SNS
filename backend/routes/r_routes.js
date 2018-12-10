@@ -18,19 +18,20 @@ r_router.use(function(req,res,next){
   next();
 })
 
-r_router.use("/",function(req,res,next){
-  //renders app home page with a form switch to register page
+r_router.get("/",function(req,res,next){
+  //may not be needed
 })
-r_router.use("/login", function(req,res,next){
+r_router.get("/login/:username-:password", function(req,res){
   //tells users if they have logged in successfully
   //if so, redirects to home page
   //if not, redirects back to Login
-
+  signInReader(req,res);
 })
-r_router.use("/register", function(req, res,next){
+r_router.post("/register/:username-:password-:email", function(req, res){
   //tells user if they have registered successfully
   //if so, redirects to Login
   //if not, redirects to registration?
+  addReader_checkExists(req,res); //calls addReader itself
 })
 
 //assumes reader if pub is not specified
@@ -109,11 +110,7 @@ function addReader (req, res) {
   })
 }
 
-
-
-
-
-function signIn (req, res) {
+/*function signIn (req, res) {
   oracledb.getConnection(config, function(err, connection){
     if(err){console.error(err.message);
       return;
@@ -136,7 +133,7 @@ function signIn (req, res) {
 
     })
   })
-}
+}*/
 
 function signInReader (req, res) {
   oracledb.getConnection(config, function(err, connection){
@@ -154,7 +151,7 @@ function signInReader (req, res) {
         if(bool === 0){
           res.status(404).send({message: 'invalid'});
         } else {
-          res.send({username: req.params.username});
+          res.status(200).send({username: req.params.username});
         }
 
     })
