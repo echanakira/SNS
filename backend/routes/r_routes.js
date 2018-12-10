@@ -2,6 +2,7 @@ var faker = require("faker");
 var oracledb = require('oracledb');
 var express = require("express");
 var path = require('path');
+var validator = require('express-validator');
 
 oracledb.autoCommit = true;
 var config = {
@@ -62,7 +63,7 @@ r_router.use("/delete/:username-:password",function(req,res){
 
 //GET MESSAGES - send as JSON
   //cat is category id or "ALL" for all messages
-r_router.get("/message/:cat", function(req, res){
+r_router.get("/message/:cat/:datetime-:lat-:long", function(req, res){
   //call message function
   getMessages(req,res);
 })
@@ -71,14 +72,18 @@ r_router.get("/message/:cat", function(req, res){
 
 
 //SUPPORT FUNCTIONS
-function getMessagesHelp (req) {
+/*function getMessagesHelp (req) {
   var ret = 'select * from message ';
   if(req.params.cat != 'ALL') {
     //need to test out this sql statement
-    ret = 'select * from (select * from messagecategory where CAT_ID='+req.params.cat+') natural join message';
+    var s1 = '(select * from messagecategory where CAT_ID='+req.params.cat+') MC';
+    var s2 = ''
+
+
+    ret = 'select * from '+s1+' natural join message where ';
   }
   return ret;
-}
+}*/
 
 function getMessages (req, res) {
   oracledb.getConnection(config, function(err, connection){
@@ -139,19 +144,23 @@ function addReader_checkExists (req, res){
         res.status(500);
       return;
     }
-    connection.execute('select count(name) from '+req.body.role+' where name=:username',
-    {username: req.body.username},
+    connection.execute('select count(name) from reader where name=:username',
+    {username: req.params.username},
     function(err, result) {
       if (err) {console.error(err.message);
       res.status(500);
       return;
     }
     console.log(result);
-    if (result.rows[0][0] === 0) {
-      addReader(req, res);//status 200 will probably be sent
-    } else {res.status(404)});} //username taken
+      if (result.rows[0][0] === 0) {
+        addReader(req, res);//status 200 will probably be sent
+        return;
+      } else {res.status(404);
+          return;
+      }
+    } //username taken
       //res.send({message: 'username taken'});}
-    })
+    )
   })
 }
 
@@ -163,7 +172,7 @@ function addReader (req, res) {
     }
     //connection.execute('select count(name) from reader where name=:username',)
     connection.execute('insert into '+req.body.role+' values (:username, :email, :password)',
-    { username: req.body.username, email: req.body.email, password: req.body.password},
+    { username: req.params.username, email: req.params.email, password: req.params.password},
     function(err, result){
       if (err){console.error(err.message);
           res.status(500);

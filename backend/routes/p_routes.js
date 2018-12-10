@@ -2,6 +2,8 @@ var faker = require("faker");
 var oracledb = require('oracledb');
 var express = require("express");
 var path = require('path');
+var validator = require('express-validator');
+const {check, validationResult} = require('express-validator/check')
 
 oracledb.autoCommit = true;
 var config = {
@@ -39,12 +41,53 @@ p_router.post("/register", function(req, res,next){
 
 p_router.get("/:username/new-message", function(req,res,next){
   //renders new-message form
-  res.sendFile(path.resolve('./views/message.html'));
+  //res.sendFile(path.resolve('./views/message.html'));
+  res.render('new-message',{
+    data: {}, errors: {} })
   //addMessage(req, res);
 })
-p_router.post("/:username/new-message", function(req,res,next){
+p_router.post("/:username/new-message", [
+  check('title')
+    .isLength({min: 1})
+    .withMessage('Title is required'),
+  check('message')
+    .isLength({min: 1})
+    .withMessage('Message is required')
+    .trim(), //trims whitespace
+  check('start_dt')
+    .not().isEmpty()
+    .isBefore('end_dt'),
+  check('end_dt')
+    .not().isEmpty(),
+  check('lat')
+    .isFloat(),
+  check('long')
+    .isFloat(),
+  check('extend')
+    .isFloat()],
+  function(req,res){
   //renders new-message form
   //res.sendFile(path.resolve('./views/home.html'));
+
+  const errors = validationResult(req);
+  console.log(errors.mapped());
+  res.render('new-message', {
+    data: req.body,
+    errors: errors.mapped()
+  }
+    /*{
+      title: {
+        msg: 'unique title required'
+      },
+      message: {
+        msg: 'message required'
+      },
+      start_dt: {
+        msg: 'start date and time are required'
+      }
+    }*/
+  )
+  //res.send("works");
   addMessage(req, res);
 })
 
