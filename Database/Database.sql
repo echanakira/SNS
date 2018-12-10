@@ -121,6 +121,48 @@ insert into message values('UMD is the most important University in the world','
                            -76.940164,38.987620,1,'UMD', EMPTY_BLOB(), EMPTY_BLOB());
 insert into messagecategory values('UMD is the most important University in the world','University');--,'Subcategory1');
 
+
+/*College park 2 - University*/
+insert into publisher values ('UMD','umd@umd.edu','UMDpassword');
+insert into category values('University');
+--insert into subcategory values('Subcategory1','Category1');
+insert into message values('There are a lot of buildings in UMD','why? Because there are a lot of people',
+                           '2018-12-12 10:10:10','18-12-12 10:10:11','2018-12-12 10:11:10',
+                           -76.941343,38.981480,1,'UMD', EMPTY_BLOB(), EMPTY_BLOB());
+insert into messagecategory values('There are a lot of buildings in UMD','University');--,'Subcategory1');
+/*38.981480, -76.941343*/
+
+/*College park 3 */
+insert into publisher values ('CollegePark','CP@CP.com','CPpassword');
+insert into category values('Animal');
+--insert into subcategory values('Subcategory1','Category1');
+insert into message values('Squirells will conquer College Park','why? Because there are a lot of squirrels',
+                           '2018-12-12 10:10:10','18-12-12 10:10:11','2018-12-12 10:11:10',
+                           -76.931281,38.973418,1,'UMD', EMPTY_BLOB(), EMPTY_BLOB());
+insert into messagecategory values('Squirells will conquer College Park','Animal');--,'Subcategory1');
+/*38.973418, -76.931281*/
+
+/*College park 4*/
+insert into publisher values ('CollegePark','CP@CP.com','CPpassword');
+insert into category values('Animal');
+--insert into subcategory values('Subcategory1','Category1');
+insert into message values('Deer will conquer College Park','why? Because there are a lot of deer',
+                           '2018-12-12 10:10:10','18-12-12 10:10:11','2018-12-12 10:11:10',
+                           -76.900973,38.980061,1,'UMD', EMPTY_BLOB(), EMPTY_BLOB());
+insert into messagecategory values('Deer will conquer College Park','Animal');--,'Subcategory1');
+/*38.980061, -76.900973*/
+
+/*College park 5*/
+insert into publisher values ('SportsCP','Sports@CP.com','sportsCPpassword');
+insert into category values('Sports');
+--insert into subcategory values('Subcategory1','Category1');
+insert into message values('Terps Vs. UCLA','This will be a great match',
+                           '2018-12-12 10:10:10','18-12-12 10:10:11','2018-12-12 10:11:10',
+                           -76.900973,38.980061,1,'UMD', EMPTY_BLOB(), EMPTY_BLOB());
+insert into messagecategory values('Terps Vs. UCLA','Sports');--,'Subcategory1');
+/*38.989924, -76.947034*/
+
+
 /*Baltimore*/
            
 insert into publisher values ('BaltimoreNews','news@baltimore.com','news');
