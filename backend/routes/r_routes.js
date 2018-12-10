@@ -86,7 +86,7 @@ function getMessagesHelp (req) {
   }
   if(req.params.cat != 'ALL') { //category is specified
     //still need to add in location ... maybe?
-    ret = 'select mid, content, publisher_ID from (select * from messagecategory where CAT_ID='+req.params.cat') natural join message where start_time < TO_TIMESTAMP('+dt+',\'YYYY-MM-DD HH24:MI\') and end_time > TO_TIMESTAMP('+dt',\'YYYY-MM-DD HH24:MI\') and abs(latitude)-extend1 <= abs('+req.params.lat+') and abs(latitude)+extend1 >= abs('+req.params.lat+') and abs(longitude)-extend1 <= abs('+req.params.long+') and abs(longitude)+extend1 >= abs('+req.params.long+');';
+    ret = 'select mid, content, publisher_ID from (select * from messagecategory where CAT_ID='+req.params.cat') natural join message where start_time < TO_TIMESTAMP('+dt+',\'YYYY-MM-DD HH24:MI\') and end_time > TO_TIMESTAMP('+dt',\'YYYY-MM-DD HH24:MI\') and abs(latitude)-(extend1/69) <= abs('+req.params.lat+') and abs(latitude)+(extend1/69) >= abs('+req.params.lat+') and abs(longitude)-(extend1/69) <= abs('+req.params.long+') and abs(longitude)+(extend1/69) >= abs('+req.params.long+');';
   }
   return ret;
 }

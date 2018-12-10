@@ -75,20 +75,28 @@ p_router.post("/:username/new-message", [
     data: req.body,
     errors: errors.mapped()
   }
-    /*{
-      title: {
-        msg: 'unique title required'
-      },
-      message: {
-        msg: 'message required'
-      },
-      start_dt: {
-        msg: 'start date and time are required'
-      }
-    }*/
+
   )
   //res.send("works");
   //addMessage(req, res);
+})
+
+p_router.get("/search", function(req, res, next){
+  res.render('websearch',{
+    data: {}, errors: {} })
+  })
+p_router.post("/search", [
+  check('title')
+    .not().isEmpty(),
+  check('category')
+    .trim()
+], function(req, res){
+  const errors = validationResult(req);
+  console.log(errors.mapped());
+  res.render('websearch', {
+    data: req.body,
+    errors: errors.mapped()
+  })
 })
 
 
