@@ -9,32 +9,37 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, TextInput} from 'react-native';
 import MapView from 'react-native-maps';
+import Marker from 'react-native-maps';
+import Circle from 'react-native-maps';
+import CustomMarker from './CustomMarker.js';
+
 //39.290386
 //-76.612190
 type Props = {};
 export default class Map extends Component<Props> {
     constructor(props) {
+      console.log('Creating Map');
         super(props);
+        // marker =
         this.state = {
             lat: '33.653390',
             long: '-84.449500',
             userLong: '',
             userLat: '',
-            markers = [
-              {latitude: '33.653390',
-              longitude: '-84.449500',
-              title: 'test',
-              subtitle:'address'}
-            ],
+            loaded:false,
+             markers: [{
+               coordinate:{
+                 latitude: 33.653390,
+                 longitude: -84.449500,
+               },
+               title:'College Park',
+               description:'UMD'
+             }],
+             isActive: false,
+             rendered:null,
         };
-     }
 
-    printProperties(object){
-         for(var propName in object) {
-             propValue = object[propName]
-             console.log("PROPERTY = "+ propName,propValue);
-         }
-    }
+     }
 
     updateLongitude = (typedText) => {
          console.log("Longitude" + typedText.toString());
@@ -62,6 +67,11 @@ export default class Map extends Component<Props> {
         //console.log("Latitude = " + this.state.lat + " Longitude = " + this.state.long);
      }
 
+     loadMarker = () => {
+       console.log('Loading');
+       this.setState({ rendered: (<CustomMarker isActive={true} />)});
+     }
+
   render() {
     return (
       <View style={styles.container}>
@@ -69,14 +79,14 @@ export default class Map extends Component<Props> {
             region = {{
               latitude: parseFloat(this.state.lat),
               longitude: parseFloat(this.state.long),
-              latitudeDelta: 0.1,
-              longitudeDelta: 0.1
+              latitudeDelta: 80,
+              longitudeDelta: 80
             }}
             onRegionChange = {(region) => this.updateRegion(region)}
-            annotations={markers[0]}
-            >
+            onMapReady={this.loadMarker}
+            />
 
-        </MapView>
+        {this.state.markers.map((marker) => console.log(marker))}
         <TextInput
           style={styles.longitude}
           onChangeText = {(typedText) => this.updateLongitude(typedText)}
@@ -112,7 +122,7 @@ export default class Map extends Component<Props> {
 
    //Change to localhost
   displayMessage = () => {
-    console.log('Fetching');
+    console.log('Fetching Messages in Map');
     fetch('https://facebook.github.io/react-native/movies.json')
     .then(response => response.json())
     .then(json => { this.setState({message: (JSON.stringify(json.movies))})});
@@ -135,6 +145,9 @@ const styles = StyleSheet.create({
     left: 0,
     bottom: 0,
     right: 0
+  },
+  marker:{
+    position:'absolute',
   },
   longitude:{
     height: 40,

@@ -1,10 +1,27 @@
 import * as React from 'react';
 import { Text, TouchableOpacity, View, StyleSheet, Input, TextInput } from 'react-native';
 import Map from './Map.js';
-import Card from './Card'
+import NearbyPosts from './NearbyPosts';
+import Card from './Card';
+import Settings from './Settings';
 
 //Main page will  have a Map overlayed with Markers and whenever a Marker is pressed, a card will appear
 export default class MainPage extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state={
+      isNearbyActive:false,
+      isSettingsActive:true,
+    }
+    this.togglePosts = this.showPosts.bind(this)
+  }
+
+  showPosts = () => {
+    console.log(this.state.isNearbyActive);
+    this.setState( state => ({isNearbyActive : !this.state.isNearbyActive}))
+  }
+
   render() {
      if(!this.props.isActive){
       return null;
@@ -13,14 +30,19 @@ export default class MainPage extends React.Component {
       <View style={styles.main}>
       <Map />
         <View style={styles.topPanel}>
-          <Text style={styles.name}> Elijah </Text>
+        <TouchableOpacity style={styles.icon} onPress={this.showPosts}>
+          <Text> Nearby </Text>
+        </TouchableOpacity>
+        <Text style={styles.name}> Elijah </Text>
           <TouchableOpacity style={styles.settings}>
             <Text> Settings </Text>
           </TouchableOpacity>
         </View>
 
         <View>
-          <Card isActive={false}/>
+          <NearbyPosts isActive={this.state.isNearbyActive} handlePress={this.togglePosts}/>
+          <Card isActive={this.props.toggleCard}/>
+          <Settings isActive={this.state.isSettingsActive}/>
         </View>
 
         <View style={styles.bottomPanel}>
@@ -36,6 +58,7 @@ export default class MainPage extends React.Component {
       </View>
     );
   }
+
 }
 
 //PopulatePage
@@ -68,14 +91,12 @@ const styles = StyleSheet.create({
     marginLeft: 100
   },
   icon:{
-    textAlign:'left',
-    fontSize: 20,
-    position: 'relative',
+    fontSize: 18,
     marginLeft: 5,
   },
   settings:{
     fontSize: 18,
-    marginLeft: 60,
+    marginLeft: 95,
   },
   input:{
     borderColor:'black',
