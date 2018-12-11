@@ -10,7 +10,7 @@ var config = {
   password      : "oracle",
   connectString : "LOCALHOST:1521/XE"
 }
-///// TODO: add email verification, add message fetching
+
 
 /////////////////////////////////////////////////////////////////////////////////
 var r_router = express.Router();
@@ -104,7 +104,10 @@ function getMessagesHelp (req) {
   }
   if(req.params.cat != 'ALL') { //category is specified
     //still need to add in location ... maybe?
-    ret = 'select mid, content, publisher_ID from (select * from messagecategory where CAT_ID='+req.params.cat+') natural join message where start_time < TO_TIMESTAMP('+dt+',\'YYYY-MM-DD HH24:MI\') and end_time > TO_TIMESTAMP('+dt',\'YYYY-MM-DD HH24:MI\') and abs(latitude)-(extend1/69) <= abs('+req.params.lat+') and abs(latitude)+(extend1/69) >= abs('+req.params.lat+') and abs(longitude)-(extend1/69) <= abs('+req.params.long+') and abs(longitude)+(extend1/69) >= abs('+req.params.long+');';
+    var s1 = 'select mid, content, publisher_ID from (select * from messagecategory where CAT_ID='+req.params.cat;
+    var s2 = ') natural join message where start_time < TO_TIMESTAMP('+dt+',\'YYYY-MM-DD HH24:MI\') and end_time > TO_TIMESTAMP('+dt+',\'YYYY-MM-DD HH24:MI\')';
+    var s3 = ' and abs(latitude)-(extend1/69) <= abs('+req.params.lat+') and abs(latitude)+(extend1/69) >= abs('+req.params.lat+') and abs(longitude)-(extend1/69) <= abs('+req.params.long;
+    ret = s1+s2+s3+') and abs(longitude)+(extend1/69) >= abs('+req.params.long+');';
   }
   return ret;
 }

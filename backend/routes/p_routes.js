@@ -4,7 +4,7 @@ var express = require("express");
 var path = require('path');
 var validator = require('express-validator');
 const {check, validationResult} = require('express-validator/check')
-
+//oracledb.outFormat = oracledb.OBJECT;
 oracledb.autoCommit = true;
 var config = {
   user          : "ORDS_PUBLIC_USER",
@@ -24,6 +24,7 @@ p_router.get("/",function(req,res,next){
   res.sendFile(path.resolve('./views/webIndex.html'));
 
 })
+
 p_router.get("/login", function(req,res){
   //tells users if they have logged in successfully
   //if so, redirects to home page
@@ -49,23 +50,30 @@ p_router.get("/:username/new-message", function(req,res,next){
 p_router.post("/:username/new-message", [
   check('title')
     .isLength({min: 1})
-    .withMessage('Title is required'),
+    .withMessage('Title is missing or taken'),
+    //.equals(checkTitleOpen('title'),'open','Title is taken. Select something more unique.'),
   check('message')
     .isLength({min: 1})
     .withMessage('Message is required')
     .trim(), //trims whitespace
   check('start_dt')
     .not().isEmpty()
-    .isBefore('end_dt'),
+    .withMessage('start must be before end'),
   check('end_dt')
-    .not().isEmpty(),
+    .not().isEmpty()
+    .withMessage('need end date and time'),
+  check('category')
+    .isLength({min: 1})
+    .withMessage('need category'),
   check('lat')
-    .isFloat(),
+    .isDecimal()
+    .withMessage('need lat as decimal'),
   check('long')
-    .isFloat(),
+    .isDecimal()
+    .withMessage('need long as decimal'),
   check('extend')
-    .isFloat()],
-  function(req,res){
+    .isDecimal()
+    .withMessage('need extend as decimal')],function(req,res){
   //renders new-message form
   //res.sendFile(path.resolve('./views/home.html'));
 
@@ -78,7 +86,10 @@ p_router.post("/:username/new-message", [
 
   )
   //res.send("works");
-  addMessage(req, res);
+  if(errors.mapped = {}){ if (
+    addMessage(req, res));
+    console.log('flag');
+    res.redirect('/pub/'+req.params.username+'/home');}
 })
 
 p_router.get("/:username/home", function(req,res){
@@ -92,12 +103,10 @@ p_router.get("/search", function(req, res, next){
   res.render('websearch',{
     data: {}, errors: {} })
   })
-p_router.post("/search", [
-  check('title')
+p_router.post("/search",
+[check('title')
     .trim(),
-  check('category')
-    .trim()
-], function(req, res){
+  check('category')  .trim()], function(req, res){
   const errors = validationResult(req);
   console.log(errors.mapped());
   res.render('websearch', {
@@ -106,7 +115,49 @@ p_router.post("/search", [
   })
 })
 
-
+p_router.get("/:username/categories", function (req,res) {
+  oracledb.getConnection(config, function(err, connection){
+    if(err){console.error(err.message);
+      return err;
+    }
+    connection.execute('select name from category',
+    function(err, result) {
+      if (err) {console.error(err.message);
+      return err;
+    }
+    console.log('json parse result.rows: '+JSON.stringify(result.rows));
+    var cat_json = (result.rows); //send json to other function
+    var cat_arr = [].concat.cat_json;
+    console.log(cat_json);
+    res.render('category-view',{
+      catData: cat_json, data: {}
+    })
+    })
+})})
+p_router.post("/:username/new-category", function(req,res){
+  addCat(req,res);
+  res.redirect('categories');
+})
+function checkTitleOpen(title){
+  oracledb.getConnection(config, function(err, connection){
+    if(err){console.error(err.message);
+      return '';
+    }
+    connection.execute('select count(mid) from message where mid=:title',
+    {title: title},
+    function(err, result) {
+      if (err) {console.error(err.message);
+      return '';
+    }
+    console.log(result);
+    if (result.rows[0][0] === 0) {
+      return 'open';
+    } else {//res.write("<html><h1>Taken</h1></html>");
+      //res.sendFile(path.resolve('./views/webIndex.html'));
+      return '';}
+    })
+  })
+}
 var checkPubExists = function (req, res){
   oracledb.getConnection(config, function(err, connection){
     if(err){console.error(err.message);
@@ -181,30 +232,71 @@ function signInPub(req, res) {
   })
 }
 
-function addMessage (req, res) {
+function addMessageCat(req, res) {
+  oracledb.getConnection(config, function(err,connection){
+    if(err){console.error(err.message)
+      return;
+    }
+
+    connection.execute('insert into messagecategory values (:mid, :cat_id )',
+    {mid: req.body.title, cat_id: req.body.category }, function(err, result) {
+      if (err) {console.error(err.message);
+      return;
+    }
+    console.log(result);
+    return; //entry has been added to messagecategory table
+    })
+  })
+}
+
+function addCat (req, res) {
   oracledb.getConnection(config, function(err, connection){
     if(err){console.error(err.message);
       return;
+    }
+    connection.execute('insert into category values (:cat)',{cat: req.body.category},
+    function(err,result){
+      if(err){
+        console.log('category already present')
+        return;} //means it was already in the table
+      console.log(result);
+      return; //added successfully
+    })
+  })
+}
+
+function addMessage (req, res) {
+  oracledb.getConnection(config, function(err, connection){
+    if(err){console.error(err.message);
+      return(err);
     }
     //needs MID, content, time_entered, start_time, end_time, long, lat, extend, publisher_id
     //mid can be a hash from vals
     console.log(formatDate(req.body.start_dt));
     console.log(formatDate(req.body.end_dt));
     console.log(formatDate(new Date().toISOString().substring(0,16)));
-    connection.execute('insert into message values (:mid, :content, TO_TIMESTAMP(:time_ent,\'YYYY-MM-DD HH24:MI\'), TO_TIMESTAMP(:sdt,\'YYYY-MM-DD HH24:MI\'), TO_TIMESTAMP(:edt,\'YYYY-MM-DD HH24:MI\'), :lo, :la, :ex, :publ)',
-    { mid: req.body.title, content: req.body.message_body,
+
+    var req_url_params = req.url.split('/');
+    console.log(req_url_params);
+    addCat(req,res);
+    connection.execute('insert into message values (:mid, :content, TO_TIMESTAMP(:time_ent,\'YYYY-MM-DD HH24:MI\'), TO_TIMESTAMP(:sdt,\'YYYY-MM-DD HH24:MI\'), TO_TIMESTAMP(:edt,\'YYYY-MM-DD HH24:MI\'), :lo, :la, :ex, :publ, null, null)',
+    { mid: req.body.title, content: req.body.message,
       time_ent: formatDate(new Date().toISOString().substring(0,16)),
       sdt: formatDate(req.body.start_dt), edt: formatDate(req.body.end_dt),
       lo: req.body.long, la: req.body.lat, ex: req.body.extend,
-      publ: req.params.username},
+      publ: req_url_params[2]},
     function(err,result){
       if (err){console.error(err.message);
-      return;
+      return(err);
       }
-      res.render('home',{});
+      //add cat
+      addMessageCat(req, res); //add to message cat
+      //res.redirect('/pub/'+req.params.username+'/home');
       console.log(result);
+      //return;
       return;
     })
+
   })
 }
 

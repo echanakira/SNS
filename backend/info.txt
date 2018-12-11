@@ -11,13 +11,17 @@ Folder: routes
       * POST /pub/register - registers publishers
       * GET /pub/:username/new-message - renders new message form
       * POST /pub/:username/new-message - validates new message form values, sends to db
+      * GET /:username/home - goes to home page
+      * GET /:username/categories - goes to category-vew page
+      *POST /:username/new-category - adds new category
+
   File: r_routes.js - holds all reader routes
     * serves as default routes, if /pub is not specified the backend
       defaults to reader routes
     * Routes - every request should result in a status code being returned
       with 200 = okay, 400/404 = invalid request, and 500 = system error
       * GET "/login/:username-:password" - basic login
-      * POST "/register/:username-:password-:email" - new reader
+      * POST "/register/:username-:password-:email-:lat-:long" - new reader
         returns
       * use (any action) "/delete/:username-:password" - should catch get and
         post requests of this form - drops this reader from reader table
@@ -26,7 +30,4 @@ Folder: routes
           - datetime should be in format "YYYY-MM-DD HH24:MI"
             where HH24 is the hour out of 24 or "NOW" if no time given
             and I will get current system datetime.
-      * POST /:username/addCat/:cat (???) - if we are letting users subscribe to
-        categories then this will add to the ReaderCategory table
-        POST /location/:username/:lat-:long - updates location in database
-      * In development *
+      * POST /location/:username/:lat-:long - updates location in database

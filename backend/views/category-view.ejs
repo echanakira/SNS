@@ -1,0 +1,50 @@
+<head>
+  <style>
+    form {
+      margin:0 auto;
+      width:300px
+      }
+      input {
+        margin-bottom:3px;
+        padding:10px;
+        width: 100%;
+        border:1px solid #CCC
+      }
+      button {
+        padding:10px
+      }
+      label {
+        cursor:pointer
+      }
+
+  </style>
+</head>
+
+<h1>Publisher Portal</h1>
+<script type="text/javascript">
+    function string(){
+         var data = <%- catData %>;
+         document.write(data);
+    }
+</script>
+<table class = "table table-inverse">
+  <thead>
+    <tr>
+      <th>Current Categories</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% for(var i=0; i< catData.length;i++){ %>
+    <tr>
+      <td><%= (catData[i]) %></td>
+    </tr>
+    <% } %>
+  </tbody>
+</table>
+<form id='new-category' action="new-category" method='post'>
+  <input type="text" name = "category" placeholder="New Category" required>
+  <button type='submit'>Add</button>
+</form>
+<form id='to-new-message' action="new-message" method='get'>
+  <button type='submit'>New Message</button>
+</form>
