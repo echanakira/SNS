@@ -33,7 +33,7 @@ export default class MainPage extends React.Component {
         <TouchableOpacity style={styles.icon} onPress={this.showPosts}>
           <Text> Nearby </Text>
         </TouchableOpacity>
-        <Text style={styles.name}> Elijah </Text>
+        <Text style={styles.name}> {this.props.userInfo} </Text>
           <TouchableOpacity style={styles.settings}>
             <Text> Settings </Text>
           </TouchableOpacity>

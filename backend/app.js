@@ -9,8 +9,8 @@ var app = express();
 var oracledb = require('oracledb');
 oracledb.autoCommit = true;
 var config = {
-  user          : "ORDS_PUBLIC_USER",
-  password      : "oracle",
+  user          : "system",
+  password      : "ambuya",
   connectString : "LOCALHOST:1521/XE"
 }
 app.set('views', path.join(__dirname, 'views'));

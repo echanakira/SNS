@@ -18,7 +18,6 @@ import CustomMarker from './CustomMarker.js';
 type Props = {};
 export default class Map extends Component<Props> {
     constructor(props) {
-      console.log('Creating Map');
         super(props);
         // marker =
         this.state = {
@@ -73,6 +72,7 @@ export default class Map extends Component<Props> {
      }
 
   render() {
+    //        {this.state.markers.map((marker) => console.log(marker))}
     return (
       <View style={styles.container}>
         <MapView style={styles.map}
@@ -86,7 +86,6 @@ export default class Map extends Component<Props> {
             onMapReady={this.loadMarker}
             />
 
-        {this.state.markers.map((marker) => console.log(marker))}
         <TextInput
           style={styles.longitude}
           onChangeText = {(typedText) => this.updateLongitude(typedText)}

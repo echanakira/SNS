@@ -8,14 +8,18 @@ export default class Login extends React.Component {
     super(props);
     this.state = {
       username: '',
-      password: ''
+      password: '',
+      loggedIn:false,
+      response:{},
     };
+
   }
 
   render() {
     if(!this.props.isActive){
       return null;
     }
+
     return (
       <View style={styles.container}>
         <TextInput
@@ -30,16 +34,11 @@ export default class Login extends React.Component {
           value={this.state.password}
           placeholder='password'
           onChangeText={password => this.setState({password})}
-          onSubmitEditing={console.log(this.state.username)}
         />
         <View style={styles.actions}>
           <Button
             title='Login'
-            onPress={() => {
-            // this.submitForm();
-            //console.log(this.props.login())
-            this.props.login();
-            }}
+            onPress={this.submitForm}
             style={styles.button}
           />
 
@@ -48,35 +47,44 @@ export default class Login extends React.Component {
     );
   }
 
-  // <Button
-  // title='Register'
-  // />
-
+  //Attempts logging in
   submitForm = () => {
-    if(this.fetchStatus){
+    this.fetchStatus();
+    if(this.state.loggedIn){
       this.login();
     }else{
       console.log('Failed');
     }
   };
 
-  //Change to localhost
+  initializeUser = (response) =>{
+    fetch('http://10.0.2.2:3000/login/'+ this.state.username+'-'+this.state.password)
+    .then(response =>  response.json())
+    .then(json => this.setState({response:json})).catch(function(error){
+        return;
+      });
+  }
+
+  //Sends login data to backend
   fetchStatus = () => {
-    console.log('Fetching Login');
-    fetch('https://facebook.github.io/react-native/movies.json')
+    fetch('http://10.0.2.2:3000/login/'+ this.state.username+'-'+this.state.password)
     .then(response =>  {
-        if(response.status == 200){
-          return true;
+        if(response.status == 200 ){
+          this.setState({loggedIn:true});
+          this.initializeUser(response);
+          return;
         } else{
           return false;
         }
-      })
+      }).catch(function(error){
+        return false;
+      });
   }
 
-  login = () => {
-    this.setState({
-      isActive:false
-    })
+  //Calls parent login
+  login = (userInfo) => {
+    userInfo = this.state.username;
+    this.props.login(userInfo);
   }
 }
 

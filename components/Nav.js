@@ -17,25 +17,31 @@ export default class Nav extends React.Component {
     this.state={
       loginActive:true,
       mainPageActive:false,
+      user:'',
     }
   }
 
  //Function is being passed into child and whenever a child calls function, parent is updated
-  changeUser(){
+  changeUser(userInfo){
+    console.log('[Nav] userInfo = ' + userInfo)
+    this.state.user = userInfo;
     this.setState({
-      loginActive: !this.state.loginActive,
-      mainPageActive: !this.state.mainPageActive
+        loginActive: !this.state.loginActive,
+        mainPageActive: !this.state.mainPageActive,
       });
-    console.log(this.state.loginActive);
+      console.log('[Nav] user = ' + this.state.user);
   }
+
 
 //        <Card isActive={this.state.mainPageActive} />
 
   render() {
+    console.log('[Nav] State Changed');
+    console.log('[Nav] this.state.user= ' + this.state.user);
     return (
       <View>
         <Login login={this.changeUser.bind(this)} isActive={this.state.loginActive} />
-        <MainPage isActive={this.state.mainPageActive}/>
+        <MainPage isActive={this.state.mainPageActive} userInfo={this.state.user}/>
       </View>
       );
   }

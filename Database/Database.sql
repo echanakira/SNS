@@ -224,8 +224,6 @@ insert into readercategory values ('Clemente','University');
 
 
 
-
-
 /*Template*/
 insert into publisher values ('person1','person1@sns.com','person1');
 
@@ -238,3 +236,4 @@ insert into messagecategory values('Message01','Category1');--,'Subcategory1');
 
 insert into reader values ('person101','person101@sns.com','person101');
 insert into readercategory values ('person101','Category1','Subcategory1');
+

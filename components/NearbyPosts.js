@@ -14,7 +14,8 @@ export default class NearbyPosts extends Component<Props> {
 
         this.state = {
           data:[],
-          isCardActive:false
+          isCardActive:false,
+          category:'University',
         };
      }
 

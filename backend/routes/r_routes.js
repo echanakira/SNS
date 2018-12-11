@@ -6,8 +6,8 @@ var validator = require('express-validator');
 
 oracledb.autoCommit = true;
 var config = {
-  user          : "ORDS_PUBLIC_USER",
-  password      : "oracle",
+  user          : "system",
+  password      : "ambuya",
   connectString : "LOCALHOST:1521/XE"
 }
 ///// TODO: add email verification, add message fetching
@@ -23,7 +23,7 @@ r_router.use(function(req,res,next){
 
 
 r_router.get("/",function(req,res,next){
-  //may not be needed
+  //may not be needed=
 })
 
 //LOGIN READER
@@ -69,15 +69,16 @@ r_router.get("/message/:cat-:datetime-:lat-:long", function(req, res){
 })
 
 //if we are using readercategory table this route will add to it
-r_router.post("/:username/addCat/:cat") {
+/*r_router.post("/:username/addCat/:cat") {
 
-}
+}*/
 
 
 
 
 //SUPPORT FUNCTIONS
 //to find if location falls in zone, will need to find zone area
+/*
 function getMessagesHelp (req) {
   var ret = 'select * from message ';
   var dt = req.params.datetime;
@@ -89,7 +90,7 @@ function getMessagesHelp (req) {
     ret = 'select mid, content, publisher_ID from (select * from messagecategory where CAT_ID='+req.params.cat') natural join message where start_time < TO_TIMESTAMP('+dt+',\'YYYY-MM-DD HH24:MI\') and end_time > TO_TIMESTAMP('+dt',\'YYYY-MM-DD HH24:MI\') and abs(latitude)-(extend1/69) <= abs('+req.params.lat+') and abs(latitude)+(extend1/69) >= abs('+req.params.lat+') and abs(longitude)-(extend1/69) <= abs('+req.params.long+') and abs(longitude)+(extend1/69) >= abs('+req.params.long+');';
   }
   return ret;
-}
+} */
 
 function getMessages (req, res) {
   oracledb.getConnection(config, function(err, connection){

@@ -3,8 +3,8 @@ var oracledb = require('oracledb');
 var path = require('path');
 oracledb.autoCommit = true;
 var config = {
-  user          : "ORDS_PUBLIC_USER",
-  password      : "oracle",
+  user          : "system",
+  password      : "ambuya",
   connectString : "LOCALHOST:1521/XE"
 }
 var appRouter = function (app) {
