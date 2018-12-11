@@ -7,8 +7,8 @@ const {check, validationResult} = require('express-validator/check')
 //oracledb.outFormat = oracledb.OBJECT;
 oracledb.autoCommit = true;
 var config = {
-  user          : "ORDS_PUBLIC_USER",
-  password      : "oracle",
+  user          : "system",
+  password      : "ambuya",
   connectString : "LOCALHOST:1521/XE"
 }
 var p_router = express.Router();
