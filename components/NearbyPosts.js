@@ -12,7 +12,7 @@ export default class NearbyPosts extends Component<Props> {
         super(props);
 
         this.state = {
-          data:['Hello'],
+          data:null,
           isCardActive:false,
           category:'University',
         };
@@ -29,14 +29,17 @@ export default class NearbyPosts extends Component<Props> {
     if(!this.props.isActive){
       return null;
     }
-    this.getNearbyMessages();
+    console.log('[NearbyPosts] data => ' + JSON.stringify(this.props.data));
     return (
       <View style={styles.listView}>
           <FlatList
-          data={[{mid:'The other team had only four active players, The other team had only four active players, The other team had only four active players, The other team had only four active players'},{mid:'hello 2'},{mid:'hello 2'}]}
-          renderItem={({item}) =>
+          data={this.props.data}
+          renderItem={({items})=>
           <TouchableOpacity onPress={this.props.toggleCard}>
-            <Text style={styles.title}> {item.mid} </Text>
+            {console.log('[NEARBY] => ' + JSON.stringify(items.title))}
+
+                <Text style={styles.title}> {JSON.stringify(items.title).toString()} </Text>
+
           </TouchableOpacity>
             }
 
@@ -47,12 +50,7 @@ export default class NearbyPosts extends Component<Props> {
   }
 
    //Change to localhost
-  getNearbyMessages = () => {
-    console.log('Fetching Messages');
-    fetch('https://facebook.github.io/react-native/movies.json')
-    .then(response => response.json())
-    .then(json => { this.setState({data: [{message:'Message 1'}]})});
-  }
+
 
   displayCard = () =>{
     this.props.handlePress();
@@ -78,6 +76,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'white',
     fontWeight:'bold',
+    color:'green'
   },
   post:{
     margin: 20,

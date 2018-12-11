@@ -78,7 +78,6 @@ r_router.get("/message/:cat-:datetime-:lat-:long", function(req, res){
 
 //SUPPORT FUNCTIONS
 //to find if location falls in zone, will need to find zone area
-/*
 function getMessagesHelp (req) {
   var ret = 'select * from message ';
   var dt = req.params.datetime;
@@ -87,10 +86,15 @@ function getMessagesHelp (req) {
   }
   if(req.params.cat != 'ALL') { //category is specified
     //still need to add in location ... maybe?
-    ret = 'select mid, content, publisher_ID from (select * from messagecategory where CAT_ID='+req.params.cat') natural join message where start_time < TO_TIMESTAMP('+dt+',\'YYYY-MM-DD HH24:MI\') and end_time > TO_TIMESTAMP('+dt',\'YYYY-MM-DD HH24:MI\') and abs(latitude)-(extend1/69) <= abs('+req.params.lat+') and abs(latitude)+(extend1/69) >= abs('+req.params.lat+') and abs(longitude)-(extend1/69) <= abs('+req.params.long+') and abs(longitude)+(extend1/69) >= abs('+req.params.long+');';
+    cat ='select mid, content, publisher_ID from (select * from messagecategory where CAT_ID='+req.params.cat;
+    start =') natural join message where start_time < TO_TIMESTAMP('+dt;
+    end = ',\'YYYY-MM-DD HH24:MI\') and end_time > TO_TIMESTAMP('+dt;
+    lat = ',\'YYYY-MM-DD HH24:MI\') and abs(latitude)-(extend1/69) <= abs('+req.params.lat + ') and abs(latitude)+(extend1/69) >= abs('+req.params.lat;
+    long =') and abs(longitude)-(extend1/69) <= abs('+req.params.long+') and abs(longitude)+(extend1/69) >= abs('+req.params.long+');';
+    ret = cat + start + end +lat +long;
   }
   return ret;
-} */
+}
 
 function getMessages (req, res) {
   oracledb.getConnection(config, function(err, connection){

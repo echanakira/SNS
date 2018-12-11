@@ -38,7 +38,7 @@ export default class Cards extends React.Component {
                marginLeft: 150,
                width: 50
              }}
-             onPress={() => this.props.closeCard()}
+             onPress={this.props.toggleCard}
           >
             <Text
               style={{
@@ -56,14 +56,12 @@ export default class Cards extends React.Component {
 
    //Change to localhost
   displayMessage1 = () => {
-    console.log('Fetching Message in Card');
     fetch('https://facebook.github.io/react-native/movies.json')
     .then(response => response.json())
     .then(json => { this.setState({message: (JSON.stringify(json.movies))})});
   }
 
   displayMessage = () => {
-    console.log('Fetching Message in Card');
     fetch('https://facebook.github.io/react-native/movies.json')
     .then(response => response.json())
     .then(json => json.movies)

@@ -2,14 +2,15 @@ import * as React from 'react';
 import { Text, View, StyleSheet, TextInput, Button } from 'react-native';
 
 
-export default class Login extends React.Component {
+export default class Register extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
       username: '',
       password: '',
-      loggedIn:false,
+      email:'',
+      registered:false,
       response:{},
     };
 
@@ -35,14 +36,22 @@ export default class Login extends React.Component {
           placeholder='password'
           onChangeText={password => this.setState({password})}
         />
+
+        <TextInput
+          //ref={ref => (this.passwordInput = ref)}
+          value={this.state.email}
+          placeholder='password'
+          onChangeText={email => this.setState({email})}
+        />
+
         <View style={styles.actions}>
           <Button
-            title='Login'
+            title='Register'
             onPress={this.submitForm}
             style={styles.button}
           />
           <Button
-            title='Register'
+            title='Close'
             onPress={this.props.toggleRegister}
             style={styles.button}
           />
@@ -53,7 +62,7 @@ export default class Login extends React.Component {
 
   //Attempts logging in
   submitForm = () => {
-    console.log('Logging in');
+    console.log('Submitted Form');
     this.fetchStatus();
     if(this.state.loggedIn){
       this.login();
@@ -62,21 +71,21 @@ export default class Login extends React.Component {
     }
   };
 
-  initializeUser = (response) =>{
-    fetch('http://10.0.2.2:3000/login/'+ this.state.username+'-'+this.state.password)
-    .then(response =>  response.json())
-    .then(json => this.setState({response:json})).catch(function(error){
-        return;
-      });
-  }
-
   //Sends login data to backend
   fetchStatus = () => {
-    fetch('http://10.0.2.2:3000/login/'+ this.state.username+'-'+this.state.password)
-    .then(response =>  {
+    fetch('http://10.0.2.2:3000/register/'+ this.state.username+'-'+this.state.password+'-'+this.state.email,
+    {
+  method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      username: this.state.username,
+      password: this.state.password,
+      email: this.state.email
+    })}).then(response =>  {
         if(response.status == 200 ){
-          this.setState({loggedIn:true});
-          this.initializeUser(response);
           return;
         } else{
           return false;
@@ -87,9 +96,8 @@ export default class Login extends React.Component {
   }
 
   //Calls parent login
-  login = (userInfo) => {
-    userInfo = this.state.username;
-    this.props.login(userInfo);
+  loginPage = () => {
+    this.props.toggleRegister();
   }
 }
 
