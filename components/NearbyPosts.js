@@ -9,17 +9,21 @@ import Card from './Card'
 type Props = {};
 export default class NearbyPosts extends Component<Props> {
     constructor(props) {
-      console.log('Creating Custom');
         super(props);
 
         this.state = {
-          data:[],
+          data:['Hello'],
           isCardActive:false,
           category:'University',
         };
      }
 
 
+     // renderItem={({item:message}) =>
+     //   <TouchableOpacity onPress={this.displayCard()}>
+     //     <Text> {message.message} </Text>
+     //   </TouchableOpacity>
+     // }
 
   render() {
     if(!this.props.isActive){
@@ -27,19 +31,17 @@ export default class NearbyPosts extends Component<Props> {
     }
     this.getNearbyMessages();
     return (
-      <View>
-        <ScrollView style={styles.post}>
+      <View style={styles.listView}>
           <FlatList
-          data={this.state.data}
-          renderItem={({item:message}) =>
-            <TouchableOpacity onPress={this.displayCard()}>
-              <Text> {message.message} </Text>
-            </TouchableOpacity>
-          }
-          keyExtractor={item => item.message}
+          data={[{mid:'The other team had only four active players, The other team had only four active players, The other team had only four active players, The other team had only four active players'},{mid:'hello 2'},{mid:'hello 2'}]}
+          renderItem={({item}) =>
+          <TouchableOpacity onPress={this.props.toggleCard}>
+            <Text style={styles.title}> {item.mid} </Text>
+          </TouchableOpacity>
+            }
+
           />
-          <Button title='Press' />
-        </ScrollView>
+          <Button title='Close' onPress={this.props.handlePress} />
       </View>
     );
   }
@@ -49,24 +51,33 @@ export default class NearbyPosts extends Component<Props> {
     console.log('Fetching Messages');
     fetch('https://facebook.github.io/react-native/movies.json')
     .then(response => response.json())
-    .then(json => { this.setState({data: [{message:'Message 1'}, {message:'Message 2'},
-      {message:'Message 3'}, {message:'Message 4'}, {message:'Message 5'}]})});
+    .then(json => { this.setState({data: [{message:'Message 1'}]})});
   }
 
   displayCard = () =>{
-    //closeNearby
     this.props.handlePress();
     //remove post from FlatList
     //show card
     this.setState({isCardActive : !this.state.isCardActive});
-
   }
 
 }
 
 const styles = StyleSheet.create({
-  marker:{
-    position:'absolute'
+  listView:{
+    margin: 10,
+    width: 390,
+    backgroundColor: 'white',
+    borderRadius: 5,
+    borderWidth: 0.5,
+    borderColor: '#d6d7da',
+  },
+  title:{
+    backgroundColor: 'lightblue',
+    borderRadius: 3,
+    borderWidth: 1,
+    borderColor: 'white',
+    fontWeight:'bold',
   },
   post:{
     margin: 20,

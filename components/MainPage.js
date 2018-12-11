@@ -13,13 +13,22 @@ export default class MainPage extends React.Component {
     this.state={
       isNearbyActive:false,
       isSettingsActive:false,
+      isCardActive:false,
+      isSettingsActive:false,
     }
     this.togglePosts = this.showPosts.bind(this)
   }
 
   showPosts = () => {
-    console.log(this.state.isNearbyActive);
     this.setState( state => ({isNearbyActive : !this.state.isNearbyActive}))
+  }
+
+  showCard = () => {
+    this.setState( state => ({isCardActive : !this.state.isCardActive}))
+  }
+
+  showSettings = () =>{
+    this.setState( state => ({isSettingsActive : !this.state.isSettingsActive}))
   }
 
   render() {
@@ -34,14 +43,14 @@ export default class MainPage extends React.Component {
           <Text> Nearby </Text>
         </TouchableOpacity>
         <Text style={styles.name}> {this.props.userInfo} </Text>
-          <TouchableOpacity style={styles.settings}>
+          <TouchableOpacity onPress={this.showSettings} style={styles.settings}>
             <Text> Settings </Text>
           </TouchableOpacity>
         </View>
 
         <View>
           <NearbyPosts isActive={this.state.isNearbyActive} handlePress={this.togglePosts}/>
-          <Card isActive={this.props.toggleCard}/>
+          <Card isActive={this.state.isCardActive} toggleCard={this.showCard}/>
           <Settings isActive={this.state.isSettingsActive}/>
         </View>
 

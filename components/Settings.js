@@ -1,21 +1,31 @@
 import * as React from 'react';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import Archives from './Archives.js';
+import Categories from './Categories.js';
 
-export default class App extends React.Component {
+export default class Settings extends React.Component {
 
 //Pass a change co-ordinates handles
   constructor(props) {
     super(props);
     this.state={
-
+      isArchivesActive: false,
+      isCategoriesActive:true,
     }
+  }
+
+  toggleArchive = () =>{
+    this.setState( state => ({isArchivesActive : !this.state.isArchivesActive}))
+  }
+
+  toggleCategories = () =>{
+    this.setState( state => ({isCategoriesActive : !this.state.isCategoriesActive}))
   }
 
   render() {
     if(!this.props.isActive){
       return null;
     }
-
     return (
       <View style={styles.container}>
         <View style={styles.settings}>
@@ -26,22 +36,20 @@ export default class App extends React.Component {
               borderBottomWidth: 1.5,
             }}
           />
-          <TouchableOpacity style={styles.opacity}>
-            <Text style={styles.text} > Set Coords </Text>
-          </TouchableOpacity>
 
-          <TouchableOpacity  style={styles.opacity}>
+          <TouchableOpacity onPress={this.toggleCategories} style={styles.opacity}>
               <Text style={styles.text}> Set Categories </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity  style={styles.opacity}>
+          <TouchableOpacity onPress={this.toggleArchive} style={styles.opacity}>
               <Text style={styles.text}> Archives </Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.opacity}>
             <Text style={styles.text}> Delete Account </Text>
           </TouchableOpacity>
-
+          <Archives isActive={this.state.isArchivesActive} />
+          <Categories isActive={this.state.isCategoriesActive} />
         </View>
       </View>
     );
