@@ -56,16 +56,31 @@
         <div class="error">need start date and time</div>
       <% } %>
   </div>
-  <label for="end">Enter an end date and time: </label>
-  <input id = "end" type="datetime-local" name = "end_dt">
+  <div class= "<%'form-field'%>">
+    <label for="end">Enter an end date and time: </label>
+    <input id = "end" class="input" type="datetime-local" name = "end_dt" value="<%=data.end_dt%>">
+      <% if (errors.end_dt) { %>
+        <div class="error">need end date and time</div>
+      <% } %>
+  </div>
+  <div class= "<%'form-field'%>">
+    <label for="category">Enter the Category: </label>
+    <input id = "category" class="input" type="text" name = "category" value= "<%=data.category%>">
+  </div>
   <label for="lat">Enter the latitude for your message area center: </label>
-  <input id = "lat" type="float" name = "lat">
-  <label for="long">Enter the longitude for your message area center: </label>
-  <input id = "long" type="float" name = "long">
+  <input id = "lat" type="float" name = "lat" value="<%=data.lat%>" >
+  <label for= "long">Enter the longitude for your message area center: </label>
+  <input id = "long" type="float" name = "long" value="<%=data.long%>">
   <label for="extend">Enter the radius you would like your message to cover around this point (in miles): </label>
-  <input id = "extend" type="float" name = "extend">
+  <input id = "extend" type="float" name = "extend" value="<%=data.extend%>">
+
   <!--input type = "hidden" id ="today"-->
   <div class="form-actions">
     <button class= "btn" type="submit">Submit</button>
   </div>
+</form>
+
+<form id='to-category-view' action="categories" method='get'>
+  <!--input type="text" name = "username" placeholder="Username" required-->
+  <button type='submit'>Categories</button>
 </form>
