@@ -26,7 +26,7 @@ Folder: routes
           - datetime should be in format "YYYY-MM-DD HH24:MI"
             where HH24 is the hour out of 24 or "NOW" if no time given
             and I will get current system datetime.
-          - NOTE: Still need to implement lat long filtering
       * POST /:username/addCat/:cat (???) - if we are letting users subscribe to
         categories then this will add to the ReaderCategory table
+        POST /location/:username/:lat-:long - updates location in database
       * In development *

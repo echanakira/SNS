@@ -78,7 +78,14 @@ p_router.post("/:username/new-message", [
 
   )
   //res.send("works");
-  //addMessage(req, res);
+  addMessage(req, res);
+})
+
+p_router.get("/:username/home", function(req,res){
+  //res.sendFile(path.resolve('./views/webIndex.html'));
+  res.render('home',{
+    data:{}
+  })
 })
 
 p_router.get("/search", function(req, res, next){
@@ -87,7 +94,7 @@ p_router.get("/search", function(req, res, next){
   })
 p_router.post("/search", [
   check('title')
-    .not().isEmpty(),
+    .trim(),
   check('category')
     .trim()
 ], function(req, res){
@@ -166,7 +173,7 @@ function signInPub(req, res) {
           return;
         } else {
           //take to "home" or new messaage page
-          res.redirect('/pub/'+req.query.username+'/new-message');
+          res.redirect('/pub/'+req.query.username+'/home');
           return;
         }
 
@@ -194,7 +201,7 @@ function addMessage (req, res) {
       if (err){console.error(err.message);
       return;
       }
-      res.send(result);
+      res.render('home',{});
       console.log(result);
       return;
     })
