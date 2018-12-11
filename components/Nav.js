@@ -15,8 +15,8 @@ export default class Nav extends React.Component {
   constructor() {
     super();
     this.state={
-      loginActive:false,
-      mainPageActive:true,
+      loginActive:true,
+      mainPageActive:false,
     }
   }
 

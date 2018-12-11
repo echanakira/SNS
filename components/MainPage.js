@@ -12,7 +12,7 @@ export default class MainPage extends React.Component {
     super(props);
     this.state={
       isNearbyActive:false,
-      isSettingsActive:true,
+      isSettingsActive:false,
     }
     this.togglePosts = this.showPosts.bind(this)
   }

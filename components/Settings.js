@@ -3,6 +3,7 @@ import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 
 export default class App extends React.Component {
 
+//Pass a change co-ordinates handles
   constructor(props) {
     super(props);
     this.state={
@@ -26,11 +27,15 @@ export default class App extends React.Component {
             }}
           />
           <TouchableOpacity style={styles.opacity}>
-            <Text style={styles.text} > Delete Account </Text>
+            <Text style={styles.text} > Set Coords </Text>
           </TouchableOpacity>
 
           <TouchableOpacity  style={styles.opacity}>
-              <Text style={styles.text}> Set Filter </Text>
+              <Text style={styles.text}> Set Categories </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity  style={styles.opacity}>
+              <Text style={styles.text}> Archives </Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.opacity}>
@@ -69,7 +74,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: '#d6d7da',
     backgroundColor: '#DCDCDC',
-    justifyContent: 'center',
+    textAlign: 'center',
   },
   opacity:{
     flexDirection: 'column',
