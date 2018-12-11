@@ -7,7 +7,8 @@ export default class Cards extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      message:'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed doeiusmod tempor incididunt ut labore et dolore magna aliqua.'
+      message:'',
+      publisher: ''
     };
   }
 
@@ -15,11 +16,12 @@ export default class Cards extends React.Component {
     if(!this.props.isActive){
         return null;
     }
+    this.displayMessage();
     return (
       <View style={styles.container}>
 
         <View style={styles.card}>
-          <Text style={styles.name}> [Name] </Text>
+          <Text style={styles.name}> {this.state.publisher.split('"').join('')} </Text>
           <View
             style={{
               borderBottomColor: 'black',
@@ -27,7 +29,7 @@ export default class Cards extends React.Component {
             }}
           />
           <Text style={styles.message}>
-            {this.state.message}
+            {this.state.message.split('"').join('')}
           </Text>
           <TouchableOpacity
             style={{
@@ -47,22 +49,26 @@ export default class Cards extends React.Component {
               }}
             > Close </Text>
           </TouchableOpacity>
-          <Button
-            title='Press'
-            onPress={this.displayMessage()}
-          
-          />
         </View>
       </View>
     );
   }
 
    //Change to localhost
-  displayMessage = () => {
-    console.log('Fetching');
+  displayMessage1 = () => {
+    console.log('Fetching Message in Card');
     fetch('https://facebook.github.io/react-native/movies.json')
     .then(response => response.json())
     .then(json => { this.setState({message: (JSON.stringify(json.movies))})});
+  }
+
+  displayMessage = () => {
+    console.log('Fetching Message in Card');
+    fetch('https://facebook.github.io/react-native/movies.json')
+    .then(response => response.json())
+    .then(json => json.movies)
+    .then(movies => this.setState({message: (JSON.stringify(movies[0].title)),
+    publisher:(JSON.stringify(movies[0].id))}));
   }
 }
 
@@ -72,11 +78,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingTop: 120,
-    backgroundColor: '#ecf0f1',
-    margin: 8
+    margin: 25
   },
   name: {
-    fontStyle: 'normal',
+    fontWeight: 'bold',
     fontSize: 20,
   },
   message: {
@@ -90,5 +95,8 @@ const styles = StyleSheet.create({
     width: 344,
     height: 200,
     justifyContent: 'center',
+    borderRadius:10,
+    borderWidth: 1,
+    borderColor: 'lightblue'
   },
 });

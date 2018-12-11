@@ -6,6 +6,8 @@ import Login from './Login';
 import MainPage from './MainPage';
 import Card from './Card';
 import Map from './Map'
+import Map2 from './Map2'
+
 
 
 export default class Nav extends React.Component {
@@ -13,8 +15,8 @@ export default class Nav extends React.Component {
   constructor() {
     super();
     this.state={
-      loginActive:false,
-      mainPageActive:true,
+      loginActive:true,
+      mainPageActive:false,
     }
   }
 
@@ -28,6 +30,7 @@ export default class Nav extends React.Component {
   }
 
 //        <Card isActive={this.state.mainPageActive} />
+
   render() {
     return (
       <View>

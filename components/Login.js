@@ -62,7 +62,7 @@ export default class Login extends React.Component {
 
   //Change to localhost
   fetchStatus = () => {
-    console.log('Fetching');
+    console.log('Fetching Login');
     fetch('https://facebook.github.io/react-native/movies.json')
     .then(response =>  {
         if(response.status == 200){
