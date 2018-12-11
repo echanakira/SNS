@@ -2,6 +2,8 @@ var faker = require("faker");
 var oracledb = require('oracledb');
 var express = require("express");
 var path = require('path');
+var validator = require('express-validator');
+const {check, validationResult} = require('express-validator/check')
 
 oracledb.autoCommit = true;
 var config = {
@@ -39,13 +41,62 @@ p_router.post("/register", function(req, res,next){
 
 p_router.get("/:username/new-message", function(req,res,next){
   //renders new-message form
-  res.sendFile(path.resolve('./views/message.html'));
+  //res.sendFile(path.resolve('./views/message.html'));
+  res.render('new-message',{
+    data: {}, errors: {} })
   //addMessage(req, res);
 })
-p_router.post("/:username/new-message", function(req,res,next){
+p_router.post("/:username/new-message", [
+  check('title')
+    .isLength({min: 1})
+    .withMessage('Title is required'),
+  check('message')
+    .isLength({min: 1})
+    .withMessage('Message is required')
+    .trim(), //trims whitespace
+  check('start_dt')
+    .not().isEmpty()
+    .isBefore('end_dt'),
+  check('end_dt')
+    .not().isEmpty(),
+  check('lat')
+    .isFloat(),
+  check('long')
+    .isFloat(),
+  check('extend')
+    .isFloat()],
+  function(req,res){
   //renders new-message form
   //res.sendFile(path.resolve('./views/home.html'));
-  addMessage(req, res);
+
+  const errors = validationResult(req);
+  console.log(errors.mapped());
+  res.render('new-message', {
+    data: req.body,
+    errors: errors.mapped()
+  }
+
+  )
+  //res.send("works");
+  //addMessage(req, res);
+})
+
+p_router.get("/search", function(req, res, next){
+  res.render('websearch',{
+    data: {}, errors: {} })
+  })
+p_router.post("/search", [
+  check('title')
+    .not().isEmpty(),
+  check('category')
+    .trim()
+], function(req, res){
+  const errors = validationResult(req);
+  console.log(errors.mapped());
+  res.render('websearch', {
+    data: req.body,
+    errors: errors.mapped()
+  })
 })
 
 
@@ -133,10 +184,8 @@ function addMessage (req, res) {
     console.log(formatDate(req.body.start_dt));
     console.log(formatDate(req.body.end_dt));
     console.log(formatDate(new Date().toISOString().substring(0,16)));
-    var mid = faker.random.number();
-    console.log(mid);
     connection.execute('insert into message values (:mid, :content, TO_TIMESTAMP(:time_ent,\'YYYY-MM-DD HH24:MI\'), TO_TIMESTAMP(:sdt,\'YYYY-MM-DD HH24:MI\'), TO_TIMESTAMP(:edt,\'YYYY-MM-DD HH24:MI\'), :lo, :la, :ex, :publ)',
-    { mid: mid+1, content: req.body.message_body,
+    { mid: req.body.title, content: req.body.message_body,
       time_ent: formatDate(new Date().toISOString().substring(0,16)),
       sdt: formatDate(req.body.start_dt), edt: formatDate(req.body.end_dt),
       lo: req.body.long, la: req.body.lat, ex: req.body.extend,
@@ -152,7 +201,7 @@ function addMessage (req, res) {
   })
 }
 
-function curMessageCount() {
+/*function curMessageCount() {
   var ret = 0;
   oracledb.getConnection(config, function(err,connection){
     if(err){console.error(err.message);
@@ -168,7 +217,7 @@ function curMessageCount() {
   })
 })
 return ret;
-}
+}*/
 
 var formatDate = function(dt_string) {
   return dt_string.replace('T',' ');
