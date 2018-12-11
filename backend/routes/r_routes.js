@@ -10,7 +10,7 @@ var config = {
   password      : "oracle",
   connectString : "LOCALHOST:1521/XE"
 }
-///// TODO: add email verification, add message fetching
+
 
 /////////////////////////////////////////////////////////////////////////////////
 var r_router = express.Router();
@@ -35,7 +35,7 @@ r_router.get("/login/:username-:password", function(req,res){
 })
 
 //REGISTER NEW READER
-r_router.post("/register/:username-:password-:email", function(req, res){
+r_router.post("/register/:username-:password-:email-:lat-:long", function(req, res){
   //tells user if they have registered successfully
   //if so, redirects to Login
   //if not, redirects to registration?
@@ -68,13 +68,31 @@ r_router.get("/message/:cat-:datetime-:lat-:long", function(req, res){
   getMessages(req,res);
 })
 
+r_router.post("/location/:username/:lat-:long",function(req, res){
+  updateLocation(req,res);
+})
 //if we are using readercategory table this route will add to it
-r_router.post("/:username/addCat/:cat") {
-
+//r_router.post("/:username/addCat/:cat")
+function updateLocation(req, res){
+  oracledb.getConnection(config, function(err, connection){
+    if(err){console.error(err.message);
+        res.status(500);
+      return;
+    }
+    connection.execute('update reader set latitude = :lat, longitude = :long where name=:username',
+    {username: req.params.username, lat: req.params.lat, long: req.params.long},
+    function(err, result) {
+      if (err) {console.error(err.message);
+      res.status(500);
+      return;
+    }
+    console.log(result);
+    res.status(200);
+    } //username taken
+      //res.send({message: 'username taken'});}
+    )
+  })
 }
-
-
-
 
 //SUPPORT FUNCTIONS
 //to find if location falls in zone, will need to find zone area
@@ -86,7 +104,10 @@ function getMessagesHelp (req) {
   }
   if(req.params.cat != 'ALL') { //category is specified
     //still need to add in location ... maybe?
-    ret = 'select mid, content, publisher_ID from (select * from messagecategory where CAT_ID='+req.params.cat') natural join message where start_time < TO_TIMESTAMP('+dt+',\'YYYY-MM-DD HH24:MI\') and end_time > TO_TIMESTAMP('+dt',\'YYYY-MM-DD HH24:MI\') and abs(latitude)-(extend1/69) <= abs('+req.params.lat+') and abs(latitude)+(extend1/69) >= abs('+req.params.lat+') and abs(longitude)-(extend1/69) <= abs('+req.params.long+') and abs(longitude)+(extend1/69) >= abs('+req.params.long+');';
+    var s1 = 'select mid, content, publisher_ID from (select * from messagecategory where CAT_ID='+req.params.cat;
+    var s2 = ') natural join message where start_time < TO_TIMESTAMP('+dt+',\'YYYY-MM-DD HH24:MI\') and end_time > TO_TIMESTAMP('+dt+',\'YYYY-MM-DD HH24:MI\')';
+    var s3 = ' and abs(latitude)-(extend1/69) <= abs('+req.params.lat+') and abs(latitude)+(extend1/69) >= abs('+req.params.lat+') and abs(longitude)-(extend1/69) <= abs('+req.params.long;
+    ret = s1+s2+s3+') and abs(longitude)+(extend1/69) >= abs('+req.params.long+');';
   }
   return ret;
 }
@@ -177,8 +198,8 @@ function addReader (req, res) {
       return;
     }
     //connection.execute('select count(name) from reader where name=:username',)
-    connection.execute('insert into '+req.body.role+' values (:username, :email, :password)',
-    { username: req.params.username, email: req.params.email, password: req.params.password},
+    connection.execute('insert into '+req.body.role+' values (:username, :email, :password, :longitude, :latitude)',
+    { username: req.params.username, email: req.params.email, password: req.params.password, longitude: req.params.long, latitude: req.params.lat},
     function(err, result){
       if (err){console.error(err.message);
           res.status(500);
@@ -198,19 +219,20 @@ function signInReader (req, res) {
         res.status(500);
       return;
     }
-    connection.execute('select count(name) from reader where name=:username and password=:password',
+
+    connection.execute('select name, latitude, longitude from reader where name=:username and password=:password',
       {username: req.params.username, password: req.params.password},
       function(err, result){
         if(err){console.error(err.message);
             res.status(500);
           return;
         }
-        bool = result.rows[0][0];
-        console.log('matches:'+bool);
+        bool = (result != null);
+        console.log('matches? '+bool);
         if(bool === 0){
           res.status(404).send({message: 'invalid'});
         } else {
-          res.status(200).send({username: req.params.username});
+          res.status(200).json({result});
         }
 
     })
